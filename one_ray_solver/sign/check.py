@@ -10,9 +10,9 @@ class SignImpactSchwarzschild:
         self.rem, self.tem, self.pem = position
         self.robs, self.tobs, self.pobs = observer_position
 
-        self.dt, self.dr, self.dtheta, self.dphi = self.calculate_initial_velocities()
+        self.check_observer_collision()
 
-    def calculate_initial_velocities(self, geometry, data):
+    def check_observer_collision(self):
         collision = True
 
         # initial guess:
@@ -29,6 +29,18 @@ class SignImpactSchwarzschild:
             print(collision)
 
             collision = False
+
+    def calculate_initial_velocities(self):
+        return self.solver.dt, self.solver.dr, self.solver.dtheta, self.solver.dphi
+
+    def calculate_initial_momenta_general(self):
+        return 1, self.solver.dr / (1 - 2 / self.rem), self.rem**2 * self.solver.dtheta, \
+               self.solver.dphi * self.rem**2 * np.sin(self.tem)**2
+
+    def calculate_initial_momenta_ZAMO(self):
+        pt, pr, ptheta, pphi = self.calculate_initial_momenta_general()
+        al = 1 - 2 / self.rem
+        return pt / np.sqrt(al), pr * np.sqrt(al), ptheta / self.rem, pphi / (self.rem * np.sin(self.tem))
 
     def _check_if_at_observer(self, data):
         r0, t0, p0 = self.robs, self.tobs, self.pobs
