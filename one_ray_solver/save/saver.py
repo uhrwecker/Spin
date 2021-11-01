@@ -10,6 +10,7 @@ class DataSaverConfig:
         self.config['OBSERVER'] = {}
         self.config['EMITTER'] = {}
         self.config['INITIAL_DATA'] = {}
+        self.config['MOMENTA'] = {}
         self.config['CONSTANTS_OF_MOTION'] = {}
         self.config['VELOCITIES'] = {}
         self.config['NUMERICS'] = {}
@@ -38,6 +39,17 @@ class DataSaverConfig:
         self.config['INITIAL_DATA']['dr'] = dr
         self.config['INITIAL_DATA']['dtheta'] = dth
         self.config['INITIAL_DATA']['dphi'] = dp
+
+    def add_momenta_info(self, pt, pr, ptheta, pphi, p0, p1, p2, p3):
+        self.config['MOMENTA']['p_t'] = pt
+        self.config['MOMENTA']['p_r'] = pr
+        self.config['MOMENTA']['p_theta'] = ptheta
+        self.config['MOMENTA']['p_phi'] = pphi
+
+        self.config['MOMENTA']['p_0'] = p0
+        self.config['MOMENTA']['p_1'] = p1
+        self.config['MOMENTA']['p_2'] = p2
+        self.config['MOMENTA']['p_3'] = p3
 
     def add_constants_of_motion(self, lamda, qu):
         self.config['CONSTANTS_OF_MOTION']['lambda'] = lamda
