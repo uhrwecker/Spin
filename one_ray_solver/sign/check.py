@@ -59,6 +59,9 @@ class SignImpactSchwarzschild:
 
         return pt / np.sqrt(al), pr * np.sqrt(al), ptheta / self.rem, pphi / (self.rem * np.sin(self.tem))
 
+    def _solve(self):
+        return self.solver.solve()
+
     def _check_if_at_observer(self, data):
         r0, t0, p0 = self.robs, self.tobs, self.pobs
 
