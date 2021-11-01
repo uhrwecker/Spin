@@ -33,7 +33,6 @@ def main():
 
     ch = check.SignImpactSchwarzschild(sol, res[0], (robs, tobs, pobs))
     vels = ch.calculate_initial_velocities()
-    print(vels)
 
 if __name__ == '__main__':
     main()

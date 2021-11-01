@@ -13,38 +13,38 @@ class SignImpactSchwarzschild:
         self.check_observer_collision()
 
     def check_observer_collision(self):
-        collision = False
-
-        # initial guess:
-        sign_r = self.solver.sign_r
-        sign_q = self.solver.sign_q
-        sign_l = self.solver.sign_l
-
         # all sign combinations, in order if likelihood:
         signs = [(-1, -1, -1), (1, -1, -1), (-1, 1, -1), (1, 1, -1),
                  (-1, -1, 1), (1, -1, 1), (-1, 1, 1), (1, 1, 1)]
 
         dist = 10000
+        best_signs = (-1, -1, -1)
 
         for sign_comb in signs:
             # initial guess:
-            sign_r *= sign_comb[0]
-            sign_q *= sign_comb[1]
-            sign_l *= sign_comb[2]
+            sign_r = sign_comb[0]
+            sign_q = sign_comb[1]
+            sign_l = sign_comb[2]
 
             self.solver.change_signs(sign_r=sign_r, sign_q=sign_q, sign_l=sign_l, recalc=False)
             self.solver.change_emission_point(self.rem, self.tem, self.pem)
             _, data = self.solver.solve()
 
-            collision, smallest_distance = self._check_if_at_observer(data)
+            coll, smallest_distance = self._check_if_at_observer(data)
+
             if dist > smallest_distance:
                 dist = smallest_distance
+                best_signs = sign_comb
 
-            if collision:
-                break
-
-        if not collision:
+        if not dist < 1e-1:
             raise ValueError(f'Somethings not quite right here! Smallest distance {dist}.')
+
+        sign_r = best_signs[0]
+        sign_q = best_signs[1]
+        sign_l = best_signs[2]
+
+        self.solver.change_signs(sign_r=sign_r, sign_q=sign_q, sign_l=sign_l, recalc=False)
+        self.solver.change_emission_point(self.rem, self.tem, self.pem)
 
     def calculate_initial_velocities(self):
         return self.solver.dt, self.solver.dr, self.solver.dtheta, self.solver.dphi
@@ -56,6 +56,7 @@ class SignImpactSchwarzschild:
     def calculate_initial_momenta_ZAMO(self):
         pt, pr, ptheta, pphi = self.calculate_initial_momenta_general()
         al = 1 - 2 / self.rem
+
         return pt / np.sqrt(al), pr * np.sqrt(al), ptheta / self.rem, pphi / (self.rem * np.sin(self.tem))
 
     def _check_if_at_observer(self, data):
