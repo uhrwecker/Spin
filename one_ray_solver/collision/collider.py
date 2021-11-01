@@ -1,17 +1,11 @@
 """This class checks whether the emitter is hit by the light ray coming from the observer,
 and gets the minimal distance and the position of impact."""
 
-import numpy as np
-
 import one_ray_solver.collision.sphere as sphere
 
 
 class Collider:
-    def __init__(self, robs, tobs, pobs, rem, tem, pem, geometry, interpolation_steps=10000):
-        self.robs = robs
-        self.tobs = tobs
-        self.pobs = pobs
-
+    def __init__(self, rem, tem, pem, geometry, interpolation_steps=10000):
         self.rem = rem
         self.tem = tem
         self.pem = pem
