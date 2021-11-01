@@ -16,74 +16,74 @@ class DataSaverConfig:
         self.config['NUMERICS'] = {}
 
     def add_observer_info(self, robs, tobs, pobs, alpha, beta):
-        self.config['OBSERVER']['robs'] = robs
-        self.config['OBSERVER']['tobs'] = tobs
-        self.config['OBSERVER']['pobs'] = pobs
+        self.config['OBSERVER']['robs'] = str(robs)
+        self.config['OBSERVER']['tobs'] = str(tobs)
+        self.config['OBSERVER']['pobs'] = str(pobs)
 
-        self.config['OBSERVER']['alpha'] = alpha
-        self.config['OBSERVER']['beta'] = beta
+        self.config['OBSERVER']['alpha'] = str(alpha)
+        self.config['OBSERVER']['beta'] = str(beta)
 
     def add_emitter_info(self, s, rho, theta, phi):
-        self.config['EMITTER']['s'] = s
-        self.config['EMITTER']['rho'] = rho
-        self.config['EMITTER']['Theta'] = theta
-        self.config['EMITTER']['PHI'] = phi
+        self.config['EMITTER']['s'] = str(s)
+        self.config['EMITTER']['rho'] = str(rho)
+        self.config['EMITTER']['Theta'] = str(theta)
+        self.config['EMITTER']['PHI'] = str(phi)
 
     def add_initial_data_info(self, t0, r0, th0, p0, dt, dr, dth, dp):
-        self.config['INITIAL_DATA']['t0'] = t0
-        self.config['INITIAL_DATA']['r0'] = r0
-        self.config['INITIAL_DATA']['theta0'] = th0
-        self.config['INITIAL_DATA']['phi0'] = p0
+        self.config['INITIAL_DATA']['t0'] = str(t0)
+        self.config['INITIAL_DATA']['r0'] = str(r0)
+        self.config['INITIAL_DATA']['theta0'] = str(th0)
+        self.config['INITIAL_DATA']['phi0'] = str(p0)
 
-        self.config['INITIAL_DATA']['dt'] = dt
-        self.config['INITIAL_DATA']['dr'] = dr
-        self.config['INITIAL_DATA']['dtheta'] = dth
-        self.config['INITIAL_DATA']['dphi'] = dp
+        self.config['INITIAL_DATA']['dt'] = str(dt)
+        self.config['INITIAL_DATA']['dr'] = str(dr)
+        self.config['INITIAL_DATA']['dtheta'] = str(dth)
+        self.config['INITIAL_DATA']['dphi'] = str(dp)
 
     def add_momenta_info(self, pt, pr, ptheta, pphi, p0, p1, p2, p3):
-        self.config['MOMENTA']['p_t'] = pt
-        self.config['MOMENTA']['p_r'] = pr
-        self.config['MOMENTA']['p_theta'] = ptheta
-        self.config['MOMENTA']['p_phi'] = pphi
+        self.config['MOMENTA']['p_t'] = str(pt)
+        self.config['MOMENTA']['p_r'] = str(pr)
+        self.config['MOMENTA']['p_theta'] = str(ptheta)
+        self.config['MOMENTA']['p_phi'] = str(pphi)
 
-        self.config['MOMENTA']['p_0'] = p0
-        self.config['MOMENTA']['p_1'] = p1
-        self.config['MOMENTA']['p_2'] = p2
-        self.config['MOMENTA']['p_3'] = p3
+        self.config['MOMENTA']['p_0'] = str(p0)
+        self.config['MOMENTA']['p_1'] = str(p1)
+        self.config['MOMENTA']['p_2'] = str(p2)
+        self.config['MOMENTA']['p_3'] = str(p3)
 
     def add_constants_of_motion(self, lamda, qu):
-        self.config['CONSTANTS_OF_MOTION']['lambda'] = lamda
-        self.config['CONSTANTS_OF_MOTION']['q'] = qu
+        self.config['CONSTANTS_OF_MOTION']['lambda'] = str(lamda)
+        self.config['CONSTANTS_OF_MOTION']['q'] = str(qu)
 
     def add_velocities_info(self, orbit, gamma_orbit, rel_vel, gamma_rel_vel, u1, u3, gamma_u13):
-        self.config['VELOCITIES']['orbit'] = orbit
-        self.config['VELOCITIES']['gamma_orbit'] = gamma_orbit
+        self.config['VELOCITIES']['orbit'] = str(orbit)
+        self.config['VELOCITIES']['gamma_orbit'] = str(gamma_orbit)
 
-        self.config['VELOCITIES']['relative_velocitiy'] = rel_vel
-        self.config['VELOCITIES']['gamma_rel_vel'] = gamma_rel_vel
+        self.config['VELOCITIES']['relative_velocitiy'] = str(rel_vel)
+        self.config['VELOCITIES']['gamma_rel_vel'] = str(gamma_rel_vel)
 
-        self.config['VELOCITIES']['surf_u1'] = u1
-        self.config['VELOCITIES']['surf_u3'] = u3
-        self.config['VELOCITIES']['gamma_surf_u'] = gamma_u13
+        self.config['VELOCITIES']['surf_u1'] = str(u1)
+        self.config['VELOCITIES']['surf_u3'] = str(u3)
+        self.config['VELOCITIES']['gamma_surf_u'] = str(gamma_u13)
 
     def add_numerics_info(self, start, stop, num, abserr, relerr, interp_num, time):
-        self.config['NUMERICS']['start'] = start
-        self.config['NUMERICS']['stop'] = stop
-        self.config['NUMERICS']['lightray_num'] = num
-        self.config['NUMERICS']['abserr'] = abserr
-        self.config['NUMERICS']['relerr'] = relerr
-        self.config['NUMERICS']['interpolation_num'] = interp_num
-        self.config['NUMERICS']['time_spent'] = time
+        self.config['NUMERICS']['start'] = str(start)
+        self.config['NUMERICS']['stop'] = str(stop)
+        self.config['NUMERICS']['lightray_num'] = str(num)
+        self.config['NUMERICS']['abserr'] = str(abserr)
+        self.config['NUMERICS']['relerr'] = str(relerr)
+        self.config['NUMERICS']['interpolation_num'] = str(interp_num)
+        self.config['NUMERICS']['time_spent'] = str(time)
 
     def save(self, handle=None):
         if not handle:
             s = self.config['EMITTER']['s']
             alpha = self.config['OBSERVER']['alpha']
-            beta = self.config['EMITTER']['beta']
+            beta = self.config['OBSERVER']['beta']
             handle = f'{s}_{alpha}_{beta}'
 
         with open(self.fp + handle + '.cfg', 'w') as file:
-            file.write(self.config)
+            self.config.write(file)
 
     def save_data_to_csv(self, sigma, ray, handle=None):
         data = {}
@@ -103,7 +103,7 @@ class DataSaverConfig:
         if not handle:
             s = self.config['EMITTER']['s']
             alpha = self.config['OBSERVER']['alpha']
-            beta = self.config['EMITTER']['beta']
+            beta = self.config['OBSERVER']['beta']
             handle = f'{s}_{alpha}_{beta}'
 
         frame.to_csv(self.fp + handle + '.csv', index=False)
