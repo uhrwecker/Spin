@@ -1,7 +1,43 @@
 from scipy.integrate import odeint
 import numpy as np
+import contextlib
+import os
+import sys
 
 from one_ray_solver.ode import schwarzschild
+
+
+def fileno(file_or_fd):
+    fd = getattr(file_or_fd, 'fileno', lambda: file_or_fd)()
+    if not isinstance(fd, int):
+        raise ValueError("Expected a file (`.fileno()`) or a file descriptor")
+    return fd
+
+@contextlib.contextmanager
+def stdout_redirected(to=os.devnull, stdout=None):
+    """
+    https://stackoverflow.com/a/22434262/190597 (J.F. Sebastian)
+    """
+    if stdout is None:
+       stdout = sys.stdout
+
+    stdout_fd = fileno(stdout)
+    # copy stdout_fd before it is overwritten
+    #NOTE: `copied` is inheritable on Windows when duplicating a standard stream
+    with os.fdopen(os.dup(stdout_fd), 'wb') as copied:
+        stdout.flush()  # flush library buffers that dup2 knows nothing about
+        try:
+            os.dup2(fileno(to), stdout_fd)  # $ exec >&to
+        except ValueError:  # filename
+            with open(to, 'wb') as to_file:
+                os.dup2(to_file.fileno(), stdout_fd)  # $ exec > to
+        try:
+            yield stdout # allow code to be run with the redirected stdout
+        finally:
+            # restore stdout to its previous value
+            #NOTE: dup2 makes stdout_fd inheritable unconditionally
+            stdout.flush()
+            os.dup2(copied.fileno(), stdout_fd)  # $ exec >&copied
 
 
 class ODESolverSchwazrschild:
@@ -39,7 +75,8 @@ class ODESolverSchwazrschild:
         """
         psi = np.array([self.t0, self.dt, self.robs, self.dr, self.tobs, self.dtheta, self.pobs, self.dphi])
 
-        result = odeint(schwarzschild.geod, psi, self.sigma, args=(self.m, ), atol=self.abserr, rtol=self.relerr)
+        with stdout_redirected():
+            result = odeint(schwarzschild.geod, psi, self.sigma, args=(self.m, ), atol=self.abserr, rtol=self.relerr)
 
         return self.sigma, result
 
