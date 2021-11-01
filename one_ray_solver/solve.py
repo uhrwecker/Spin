@@ -14,7 +14,8 @@ from one_ray_solver.velocities import *
 class OneRaySolver:
     def __init__(self, s=0., rem=8., tem=np.pi/2, pem=0., rho=0.5, robs=35., tobs=1., pobs=0.,
                  alpha=0., beta=-5., m=1, start=0, stop=70, num=100000, abserr=1e-7, relerr=1e-7, interp_num=10000,
-                 sign_r=-1, sign_theta=1, sign_phi=1, fp='./'):
+                 sign_r=-1, sign_theta=1, sign_phi=1, fp='./', save_even_when_not_colliding=True, save_handle=None,
+                 save_csv=False):
         self.s = s
 
         self.rem = rem
@@ -52,6 +53,10 @@ class OneRaySolver:
         self.lamda = None
         self.qu = None
 
+        self.save_even_when_not_colliding_flag = save_even_when_not_colliding
+        self.save_handle = save_handle
+        self.save_csv = save_csv
+
     def solve(self):
         start_time = time.time()
         # step 1: get the constants of motion
@@ -69,17 +74,17 @@ class OneRaySolver:
         collision_point, local_coord, collision_flag = self.collider.check(ray)
 
         # step 3a: save the light ray that is not colliding
-        if not collision_flag:
+        if not collision_flag and self.save_even_when_not_colliding_flag:
             self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
-            self.saver.add_emitter_info(self.s, self.rho, None, None)
-            self.saver.add_constants_of_motion(None, None)
-            self.saver.add_initial_data_info(None, None, None, None, None, None, None, None)
-            self.saver.add_momenta_info(None, None, None, None, None, None, None, None)
+            self.saver.add_emitter_info(self.s, self.rho, 0, 0)
+            self.saver.add_constants_of_motion(0, 0)
+            self.saver.add_initial_data_info(0, 0, 0, 0, 0, 0, 0, 0)
+            self.saver.add_momenta_info(0, 0, 0, 0, 0, 0, 0, 0)
             self.saver.add_numerics_info(self.start, self.stop, self.ray_num, self.abserr, self.relerr,
                                          self.interpolate_num, 0)
-            self.saver.add_velocities_info(None, None, None, None, None, None, None)
+            self.saver.add_velocities_info(0, 0, 0, 0, 0, 0, 0)
 
-            self.saver.save()
+            self.saver.save(self.save_handle)
 
         # step 3b: continue with the colliding light ray
         else:
@@ -91,15 +96,15 @@ class OneRaySolver:
             p0, p1, p2, p3 = self.checker.calculate_initial_momenta_ZAMO()
 
             # step 5: calculate the velocities
-            orbit_velocity, gamma_orb = self.orb.get_velocity()
-            relative_vel, gamma_rel_vel = self.rel.get_velocity()
+            (orbit_velocity, ), gamma_orb = self.orb.get_velocity()
+            (relative_vel, ), gamma_rel_vel = self.rel.get_velocity()
 
             surface = SurfaceVelocityRigidSphere(self.s, (self.rho, local_coord[0], local_coord[1]))
-            surf_vel_u1, surf_vel_u3, gamma_surf = surface.get_velocity()
+            (surf_vel_u1, surf_vel_u3), gamma_surf = surface.get_velocity()
 
             # step 6: save!
             self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
-            self.saver.add_emitter_info(self.s, self.rho, *collision_point)
+            self.saver.add_emitter_info(self.s, self.rho, *local_coord)
             self.saver.add_constants_of_motion(self.lamda, self.qu)
             self.saver.add_initial_data_info(0, *collision_point, dt, dr, dtheta, dphi)
             self.saver.add_momenta_info(pt, pr, ptheta, pphi, p0, p1, p2, p3)
@@ -108,7 +113,7 @@ class OneRaySolver:
             self.saver.add_numerics_info(self.start, self.stop, self.ray_num, self.abserr, self.relerr,
                                          self.interpolate_num, time.time() - start_time)
 
-            self.saver.save()
-            self.saver.save_data_to_csv(sigma, ray)
+            self.saver.save(self.save_handle)
 
-
+            if self.save_csv:
+                self.saver.save_data_to_csv(sigma, ray, self.save_handle)
