@@ -1,6 +1,8 @@
 """This class checks whether the emitter is hit by the light ray coming from the observer,
 and gets the minimal distance and the position of impact."""
 
+import numpy as np
+
 import one_ray_solver.collision.sphere as sphere
 
 
@@ -22,7 +24,7 @@ class Collider:
         # TODO: include more than spherical geometry here, should not be that hard
         rho, = self.geometry
         # check if there is a collision in general:
-        if not r[r < self.rem + rho]:
+        if not r[r < self.rem + rho].size:
             return [], [], False
 
         # find the minimal distance:
@@ -30,6 +32,7 @@ class Collider:
 
         # get the local coordinates, depending on the geometry:
         rr, T, P = sphere.convert_position_sphere((r_col, t_col, p_col), (self.rem, self.tem, self.pem), self.geometry)
-        print(rr, rho)
+        if not np.isclose(rr, rho, rtol=1e-2, atol=1e-1):
+            print('Numerically, there seems to be an error, as the collision detected. See the corresponding developer.')
 
         return (r_col, t_col, p_col), (T, P), True

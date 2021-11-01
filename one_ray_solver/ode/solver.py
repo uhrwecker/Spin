@@ -52,6 +52,7 @@ class ODESolverSchwazrschild:
 
         dphi = sign_l * l / (self.robs * np.sin(self.tobs))**2
 
+        print(dtheta)
         return dt, dr, dtheta, dphi
 
     def change_emission_point(self, r, t, p, recalc=True):
@@ -60,8 +61,8 @@ class ODESolverSchwazrschild:
         self.pobs = p
 
         if recalc:
-            self.dt, self.dr, self.dtheta, self.dphi = self.get_ic_from_com(self.l, self.q, self.sign_r, self.sign_q,
-                                                                            self.sign_l)
+            self.dt, self.dr, self.dtheta, self.dphi = self.get_ic_from_com(self.l, self.q, self.sign_r, self.sign_l,
+                                                                            self.sign_q)
 
     def change_signs(self, sign_r, sign_q, sign_l, recalc=True):
         self.sign_r = sign_r
@@ -69,5 +70,5 @@ class ODESolverSchwazrschild:
         self.sign_l = sign_l
 
         if recalc:
-            self.dt, self.dr, self.dtheta, self.dphi = self.get_ic_from_com(self.l, self.q, self.sign_r, self.sign_q,
-                                                                            self.sign_l)
+            self.dt, self.dr, self.dtheta, self.dphi = self.get_ic_from_com(self.l, self.q, self.sign_r, self.sign_l,
+                                                                            self.sign_q)

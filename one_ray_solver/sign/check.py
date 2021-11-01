@@ -4,7 +4,7 @@ import numpy as np
 
 
 class SignImpactSchwarzschild:
-    def __init__(self, solver, position, observer_position, geometry):
+    def __init__(self, solver, position, observer_position):
         self.solver = solver
 
         self.rem, self.tem, self.pem = position
@@ -13,22 +13,38 @@ class SignImpactSchwarzschild:
         self.check_observer_collision()
 
     def check_observer_collision(self):
-        collision = True
+        collision = False
 
         # initial guess:
         sign_r = self.solver.sign_r
         sign_q = self.solver.sign_q
         sign_l = self.solver.sign_l
 
-        while not collision:
+        # all sign combinations, in order if likelihood:
+        signs = [(-1, -1, -1), (1, -1, -1), (-1, 1, -1), (1, 1, -1),
+                 (-1, -1, 1), (1, -1, 1), (-1, 1, 1), (1, 1, 1)]
+
+        dist = 10000
+
+        for sign_comb in signs:
             # initial guess:
-            self.solver.change_signs(sign_r, sign_q, sign_l)
-            data = self.solver.solve()
+            sign_r *= sign_comb[0]
+            sign_q *= sign_comb[1]
+            sign_l *= sign_comb[2]
 
-            collision = self._check_if_at_observer(data)
-            print(collision)
+            self.solver.change_signs(sign_r=sign_r, sign_q=sign_q, sign_l=sign_l, recalc=False)
+            self.solver.change_emission_point(self.rem, self.tem, self.pem)
+            _, data = self.solver.solve()
 
-            collision = False
+            collision, smallest_distance = self._check_if_at_observer(data)
+            if dist > smallest_distance:
+                dist = smallest_distance
+
+            if collision:
+                break
+
+        if not collision:
+            raise ValueError(f'Somethings not quite right here! Smallest distance {dist}.')
 
     def calculate_initial_velocities(self):
         return self.solver.dt, self.solver.dr, self.solver.dtheta, self.solver.dphi
@@ -60,7 +76,7 @@ class SignImpactSchwarzschild:
         dist = np.sqrt((x - X) ** 2 + (y - Y) ** 2 + (z - Z) ** 2)
 
         if np.amin(dist) < 1e-2:
-            return True
+            return True, np.amin(dist)
 
         else:
-            return False
+            return False, np.amin(dist)
