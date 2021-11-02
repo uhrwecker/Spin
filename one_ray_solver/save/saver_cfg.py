@@ -1,10 +1,12 @@
 import configparser as cp
 import pandas as pd
 
+from one_ray_solver.save import saver_abc
 
-class DataSaverConfig:
+
+class DataSaverConfig(saver_abc.DataSaverABC):
     def __init__(self, fp='./'):
-        self.fp = fp
+        super().__init__(fp)
         self.config = cp.ConfigParser()
 
         self.config['OBSERVER'] = {}

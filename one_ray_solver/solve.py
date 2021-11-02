@@ -6,7 +6,7 @@ import time
 from one_ray_solver.utility import screen_COM_converter
 from one_ray_solver.ode import solver
 from one_ray_solver.collision import collider
-from one_ray_solver.save import saver
+from one_ray_solver.save import saver_cfg, saver_json
 from one_ray_solver.sign import check
 from one_ray_solver.velocities import *
 
@@ -14,7 +14,8 @@ from one_ray_solver.velocities import *
 class OneRaySolver:
     def __init__(self, s=0., rem=8., tem=np.pi/2, pem=0., rho=0.5, robs=35., tobs=1., pobs=0.,
                  alpha=0., beta=-5., m=1, start=0, stop=70, num=100000, abserr=1e-7, relerr=1e-7, interp_num=10000,
-                 sign_r=-1, sign_theta=1, sign_phi=1, fp='./', save_even_when_not_colliding=True, save_handle=None,
+                 sign_r=-1, sign_theta=1, sign_phi=1, fp='./', saver='json',
+                 save_even_when_not_colliding=True, save_handle=None,
                  save_csv=False):
         self.s = s
 
@@ -46,7 +47,12 @@ class OneRaySolver:
         self.sign_phi = sign_phi
 
         self.collider = collider.Collider(self.rem, self.tem, self.pem, [self.rho], self.interpolate_num)
-        self.saver = saver.DataSaverConfig(fp)
+        if saver == 'json':
+            self.saver = saver_json.DataSaverJson(fp)
+        elif saver == 'config':
+            self.saver = saver_cfg.DataSaverConfig(fp)
+        else:
+            raise ValueError(f'Saver type {saver} is not supported.')
         self.orb = OrbitVelocitySchwarzschild(self.s, self.rem)
         self.rel = RelativeVelocitySchwarzschild(self.s, self.rem)
 
