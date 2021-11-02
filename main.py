@@ -21,7 +21,7 @@ def main():
     alpha = -5
     beta = -5
 
-    rh = ray_handler.RayHandler(s, rem, tem, pem, rho, robs, tobs, pobs, fp='./')
+    rh = ray_handler.RayHandler(s, rem, tem, pem, rho, robs, tobs, pobs, fp='./', save_redshift=True)
     rh.run()
 
     #ray = solve.OneRaySolver(s, rem, tem, pem, rho, robs, tobs, pobs, alpha, beta, fp='../')

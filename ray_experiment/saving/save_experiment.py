@@ -51,3 +51,21 @@ class ExperimentSaver:
         elif self.save_format == 'json':
             with open(self.fp + handle + '.json', 'w') as file:
                 json.dump(self.config, file, indent=4)
+
+    def save_redshift(self, data, handle=None):
+        import numpy as np
+
+        if not handle:
+            handle = 'redshift'
+
+        data = np.array(data)
+
+        data = data[data[:, 0].argsort()]
+
+        alpha = data[:, 0]
+        beta = data[:, 1]
+        g = data[:, 2]
+
+        df = pd.DataFrame({'alpha': alpha, 'beta': beta, 'redshift': g})
+
+        df.to_csv(self.fp + handle + '.csv', index=False)

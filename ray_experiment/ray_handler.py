@@ -100,9 +100,13 @@ class RayHandler:
             if g > 0:
                 number_of_collisions += 1
 
+        # save the experiment specific data
         self.save_exp.add_setup_information(self.alpha_min, self.alpha_max, self.beta_min, self.beta_max)
         self.save_exp.add_numeric_information(self.resolution, total_time, number_of_collisions)
         self.save_exp.save()
+
+        if self.save_redshift:
+            self.save_exp.save_redshift(data_form)
 
         #print(f'Took {total_time}s.')
 
