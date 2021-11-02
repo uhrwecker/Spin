@@ -4,6 +4,8 @@ the screen."""
 import numpy as np
 import time
 import os
+from tqdm import tqdm
+import multiprocessing as mp
 
 from one_ray_solver.solve import OneRaySolver
 from ray_experiment.saving import save_experiment
@@ -72,10 +74,10 @@ class RayHandler:
         return data_fp
 
     def run(self):
-        total_time = 0
+        start_time = time.time()
         number_of_collisions = 0
 
-        solver = OneRaySolver(self.s, self.rem, self.tem, self.pem, self.rho, self.robs, self.tobs, self.pobs,
+        self.solver = OneRaySolver(self.s, self.rem, self.tem, self.pem, self.rho, self.robs, self.tobs, self.pobs,
                               0., 0., self.m, self.start, self.stop, self.ray_num, self.abserr, self.relerr,
                               self.interpolate_num, self.sign_r, self.sign_theta, self.sign_phi, self.data_fp,
                               'json', self.save_when_not_colliding, self.save_handle, self.save_csv)
@@ -86,19 +88,15 @@ class RayHandler:
         alpha_beta_matrix = self._generate_alpha_beta_matrix()
 
         # main loop; for every alpha / beta pair, run the ray solver
-        # also save total time, as well as the redshift
-        for alpha, beta in alpha_beta_matrix:
-            g, time_per_step = self.step(solver, alpha, beta)
+        # first, multiprocessing pool for cpu count - 1, because we might want to hear music idk
+        pool = mp.Pool(mp.cpu_count()-1)
+        for result in tqdm(pool.imap_unordered(self.multiprocess_step, alpha_beta_matrix), total=len(alpha_beta_matrix)):
+            # append the results
+            data_form.append(result[0:3])
+            number_of_collisions += result[3]
 
-            # save the redshift into data_form. Will need to sort for alpha (or beta) values later on.
-            data_form.append([alpha, beta, g])
-
-            # calculate total time took
-            total_time += time_per_step
-
-            # add to collision detector
-            if g > 0:
-                number_of_collisions += 1
+        # get total run time
+        total_time = time.time() - start_time
 
         # save the experiment specific data
         self.save_exp.add_setup_information(self.alpha_min, self.alpha_max, self.beta_min, self.beta_max)
@@ -108,7 +106,20 @@ class RayHandler:
         if self.save_redshift:
             self.save_exp.save_redshift(data_form)
 
-        #print(f'Took {total_time}s.')
+    def multiprocess_step(self, input_alpha_beta):
+        number_of_collisions = 0
+
+        # compute the input:
+        alpha, beta = input_alpha_beta
+
+        # make a step
+        g, time_per_step = self.step(self.solver, alpha, beta)
+
+        # add to collision detector
+        if g > 0:
+            number_of_collisions = 1
+
+        return alpha, beta, g, number_of_collisions
 
     def step(self, solver, alpha, beta):
         # main routine to setup and calculate ONE ray from a specific solver (important for multithredding) and
