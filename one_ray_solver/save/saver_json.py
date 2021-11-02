@@ -22,7 +22,7 @@ class DataSaverJson(saver_abc.DataSaverABC):
         self.config['EMITTER']['s'] = s
         self.config['EMITTER']['rho'] = rho
         self.config['EMITTER']['Theta'] = theta
-        self.config['EMITTER']['PHI'] = phi
+        self.config['EMITTER']['Phi'] = phi
 
     def add_initial_data_info(self, t0, r0, th0, p0, dt, dr, dth, dp):
         self.config['INITIAL_DATA']['t0'] = t0

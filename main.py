@@ -1,6 +1,7 @@
 """Test script for trying some things."""
 import numpy as np
 from one_ray_solver import solve
+from visualisation import simple_3d
 
 def main():
     robs = 35
@@ -18,8 +19,16 @@ def main():
     alpha = 0.5
     beta = -5
 
-    ray = solve.OneRaySolver(s, rem, tem, pem, rho, robs, tobs, pobs, alpha, beta)
-    ray.solve()
+    ray = solve.OneRaySolver(s, rem, tem, pem, rho, robs, tobs, pobs, alpha, beta, fp='../')
+    solver = ray.get_solver()
+    plot = simple_3d.Simple3DPlotter([robs, tobs, pobs], [rem, tem, pem])
+
+    data, info = ray.solve(full_output=True)
+    emitting_point = (info['INITIAL_DATA']['r0'], info['INITIAL_DATA']['theta0'], info['INITIAL_DATA']['phi0'])
+    plot.plot_from_alpha_beta(solver, alpha, beta, sign_r=-1, sign_theta=1, sign_phi=1, starting_from='observer')
+    plot.show()
+
+
 
 if __name__ == '__main__':
     main()

@@ -63,7 +63,7 @@ class OneRaySolver:
         self.save_handle = save_handle
         self.save_csv = save_csv
 
-    def solve(self):
+    def solve(self, full_output=False):
         start_time = time.time()
         # step 1: get the constants of motion
         self.lamda, self.qu = screen_COM_converter.lamda_qu_from_alpha_beta(self.alpha, self.beta,
@@ -91,6 +91,8 @@ class OneRaySolver:
             self.saver.add_velocities_info(0, 0, 0, 0, 0, 0, 0)
 
             self.saver.save(self.save_handle)
+
+            return None
 
         # step 3b: continue with the colliding light ray
         else:
@@ -123,3 +125,15 @@ class OneRaySolver:
 
             if self.save_csv:
                 self.saver.save_data_to_csv(sigma, ray, self.save_handle)
+
+            if full_output:
+                return ray, self.saver.config
+
+    def get_solver(self):
+        # this method will allow the user to access a solver object, without running the whole solver wrapper.
+        # especially useful for plotting shenanigans.
+        sol = solver.ODESolverSchwazrschild(self.robs, self.tobs, self.pobs, 0, 0, self.m,
+                                            self.start, self.stop, self.ray_num, self.abserr, self.relerr,
+                                            self.sign_r, self.sign_theta, self.sign_phi)
+
+        return sol

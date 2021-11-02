@@ -108,3 +108,11 @@ class ODESolverSchwazrschild:
         if recalc:
             self.dt, self.dr, self.dtheta, self.dphi = self.get_ic_from_com(self.l, self.q, self.sign_r, self.sign_l,
                                                                             self.sign_q)
+
+    def change_constants_of_motion(self, lamda, qu, recalc=True):
+        self.l = lamda
+        self.q = qu
+
+        if recalc:
+            self.dt, self.dr, self.dtheta, self.dphi = self.get_ic_from_com(self.l, self.q, self.sign_r, self.sign_l,
+                                                                            self.sign_q)
