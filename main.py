@@ -3,6 +3,7 @@ import numpy as np
 from one_ray_solver import solve
 from visualisation import simple_3d
 from ray_experiment import ray_handler
+from ray_experiment import ranger
 
 
 def main():
@@ -12,7 +13,7 @@ def main():
 
     rem = 8
     tem = np.pi / 2
-    pem = 0
+    pem = np.pi
 
     rho = 0.5
 
@@ -22,7 +23,10 @@ def main():
     beta = -5
 
     rh = ray_handler.RayHandler(s, rem, tem, pem, rho, robs, tobs, pobs, fp='./', save_redshift=True)
-    rh.run()
+    #rh.run()
+
+    rg = ranger.RangeAdjustment(rh)
+    rg.start()
 
     #ray = solve.OneRaySolver(s, rem, tem, pem, rho, robs, tobs, pobs, alpha, beta, fp='../')
     #solver = ray.get_solver()

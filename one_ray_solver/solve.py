@@ -16,7 +16,7 @@ class OneRaySolver:
                  alpha=0., beta=-5., m=1, start=0, stop=70, num=100000, abserr=1e-7, relerr=1e-7, interp_num=10000,
                  sign_r=-1, sign_theta=1, sign_phi=1, fp='./', saver='json',
                  save_even_when_not_colliding=True, save_handle=None,
-                 save_csv=False):
+                 save_csv=False, save_data=True):
         self.s = s
 
         self.rem = rem
@@ -62,6 +62,7 @@ class OneRaySolver:
         self.save_even_when_not_colliding_flag = save_even_when_not_colliding
         self.save_handle = save_handle
         self.save_csv = save_csv
+        self.save_data = save_data
 
     def solve(self, full_output=False):
         start_time = time.time()
@@ -91,7 +92,7 @@ class OneRaySolver:
                                          self.interpolate_num, 0)
             self.saver.add_velocities_info(0, 0, 0, 0, 0, 0, 0)
 
-            if self.save_even_when_not_colliding_flag:
+            if self.save_even_when_not_colliding_flag and self.save_data:
                 self.saver.save(self.save_handle)
 
             return None, self.saver.config
@@ -127,7 +128,8 @@ class OneRaySolver:
             self.saver.add_numerics_info(self.start, self.stop, self.ray_num, self.abserr, self.relerr,
                                          self.interpolate_num, time.time() - start_time)
 
-            self.saver.save(self.save_handle)
+            if self.save_data:
+                self.saver.save(self.save_handle)
 
             if self.save_csv:
                 self.saver.save_data_to_csv(sigma, ray, self.save_handle)
