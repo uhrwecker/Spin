@@ -80,19 +80,20 @@ class OneRaySolver:
         collision_point, local_coord, collision_flag = self.collider.check(ray)
 
         # step 3a: save the light ray that is not colliding
-        if not collision_flag and self.save_even_when_not_colliding_flag:
-            self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
-            self.saver.add_emitter_info(self.s, self.rho, 0, 0)
-            self.saver.add_constants_of_motion(0, 0)
-            self.saver.add_initial_data_info(0, 0, 0, 0, 0, 0, 0, 0)
-            self.saver.add_momenta_info(0, 0, 0, 0, 0, 0, 0, 0)
-            self.saver.add_numerics_info(self.start, self.stop, self.ray_num, self.abserr, self.relerr,
-                                         self.interpolate_num, 0)
-            self.saver.add_velocities_info(0, 0, 0, 0, 0, 0, 0)
+        if not collision_flag:
+            if self.save_even_when_not_colliding_flag:
+                self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
+                self.saver.add_emitter_info(self.s, self.rho, 0, 0)
+                self.saver.add_constants_of_motion(0, 0, 0)
+                self.saver.add_initial_data_info(0, 0, 0, 0, 0, 0, 0, 0)
+                self.saver.add_momenta_info(0, 0, 0, 0, 0, 0, 0, 0)
+                self.saver.add_numerics_info(self.start, self.stop, self.ray_num, self.abserr, self.relerr,
+                                             self.interpolate_num, 0)
+                self.saver.add_velocities_info(0, 0, 0, 0, 0, 0, 0)
 
-            self.saver.save(self.save_handle)
+                self.saver.save(self.save_handle)
 
-            return None
+            return None, {}
 
         # step 3b: continue with the colliding light ray
         else:
@@ -132,6 +133,10 @@ class OneRaySolver:
 
             if full_output:
                 return ray, self.saver.config
+
+    def set_alpha_beta(self, alpha, beta):
+        self.alpha = alpha
+        self.beta = beta
 
     def get_solver(self):
         # this method will allow the user to access a solver object, without running the whole solver wrapper.

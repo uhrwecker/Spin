@@ -30,6 +30,9 @@ class Collider:
         # find the minimal distance:
         r_col, t_col, p_col = sphere.collision_with_sphere(r, theta, phi, (self.rem, self.tem, self.pem), self.geometry)
 
+        if not r_col:
+            return [], [], False
+
         # get the local coordinates, depending on the geometry:
         rr, T, P = sphere.convert_position_sphere((r_col, t_col, p_col), (self.rem, self.tem, self.pem), self.geometry)
         if not np.isclose(rr, rho, rtol=1e-2, atol=1e-1):

@@ -23,7 +23,7 @@ def collision_with_sphere(r, t, p, position, geometry):
         return r[idx], t[idx], p[idx]
 
     else:
-        return []
+        return [], [], []
 
 
 def convert_position_sphere(position, centre, geometry):
