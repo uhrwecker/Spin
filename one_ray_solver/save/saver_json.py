@@ -46,9 +46,10 @@ class DataSaverJson(saver_abc.DataSaverABC):
         self.config['MOMENTA']['p_2'] = p2
         self.config['MOMENTA']['p_3'] = p3
 
-    def add_constants_of_motion(self, lamda, qu):
+    def add_constants_of_motion(self, lamda, qu, redshift):
         self.config['CONSTANTS_OF_MOTION']['lambda'] = lamda
         self.config['CONSTANTS_OF_MOTION']['q'] = qu
+        self.config['CONSTANTS_OF_MOTION']['redshift'] = redshift
 
     def add_velocities_info(self, orbit, gamma_orbit, rel_vel, gamma_rel_vel, u1, u3, gamma_u13):
         self.config['VELOCITIES']['orbit'] = orbit

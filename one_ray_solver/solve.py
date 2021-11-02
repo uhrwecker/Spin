@@ -3,7 +3,7 @@
 import numpy as np
 import time
 
-from one_ray_solver.utility import screen_COM_converter
+from one_ray_solver.utility import screen_COM_converter, redshift
 from one_ray_solver.ode import solver
 from one_ray_solver.collision import collider
 from one_ray_solver.save import saver_cfg, saver_json
@@ -110,10 +110,14 @@ class OneRaySolver:
             surface = SurfaceVelocityRigidSphere(self.s, (self.rho, local_coord[0], local_coord[1]))
             (surf_vel_u1, surf_vel_u3), gamma_surf = surface.get_velocity()
 
+            # step 6: calculate the redshift of the ray
+            g = redshift.g(p0, p1, p3, orbit_velocity, gamma_orb, relative_vel, gamma_rel_vel,
+                           surf_vel_u1, surf_vel_u3, gamma_surf)
+
             # step 6: save!
             self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
             self.saver.add_emitter_info(self.s, self.rho, *local_coord)
-            self.saver.add_constants_of_motion(self.lamda, self.qu)
+            self.saver.add_constants_of_motion(self.lamda, self.qu, g)
             self.saver.add_initial_data_info(0, *collision_point, dt, dr, dtheta, dphi)
             self.saver.add_momenta_info(pt, pr, ptheta, pphi, p0, p1, p2, p3)
             self.saver.add_velocities_info(orbit_velocity, gamma_orb, relative_vel, gamma_rel_vel,

@@ -3,6 +3,7 @@ import numpy as np
 from one_ray_solver import solve
 from visualisation import simple_3d
 
+
 def main():
     robs = 35
     tobs = 1
@@ -14,9 +15,9 @@ def main():
 
     rho = 0.5
 
-    s = 0
+    s = 0.
 
-    alpha = 0.5
+    alpha = -0.5
     beta = -5
 
     ray = solve.OneRaySolver(s, rem, tem, pem, rho, robs, tobs, pobs, alpha, beta, fp='../')

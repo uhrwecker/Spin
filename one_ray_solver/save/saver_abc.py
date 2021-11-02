@@ -22,7 +22,7 @@ class DataSaverABC:
         """Add momenta info to your internal configuration."""
         raise NotImplementedError('Add momenta info to your saver class.')
 
-    def add_constants_of_motion(self, lamda, qu):
+    def add_constants_of_motion(self, lamda, qu, redshift):
         """Add COM info to your internal configuration."""
         raise NotImplementedError('Add COM info to your saver class.')
 
