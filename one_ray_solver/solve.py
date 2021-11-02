@@ -138,6 +138,7 @@ class OneRaySolver:
     def set_alpha_beta(self, alpha, beta):
         self.alpha = alpha
         self.beta = beta
+        self.sign_theta = - np.sign(beta)  # that should work
 
     def get_solver(self):
         # this method will allow the user to access a solver object, without running the whole solver wrapper.

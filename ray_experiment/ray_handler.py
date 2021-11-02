@@ -6,6 +6,7 @@ import time
 import os
 
 from one_ray_solver.solve import OneRaySolver
+from ray_experiment.saving import save_experiment
 
 
 class RayHandler:
@@ -54,7 +55,9 @@ class RayHandler:
 
         self.fp = fp
         self.data_fp = self.setup()
+
         self.saver = saver
+        self.save_exp = save_experiment.ExperimentSaver(self.fp, self.saver)
         self.save_handle = save_handle
 
         self.save_when_not_colliding = save_even_when_not_colliding
@@ -70,11 +73,12 @@ class RayHandler:
 
     def run(self):
         total_time = 0
+        number_of_collisions = 0
 
         solver = OneRaySolver(self.s, self.rem, self.tem, self.pem, self.rho, self.robs, self.tobs, self.pobs,
                               0., 0., self.m, self.start, self.stop, self.ray_num, self.abserr, self.relerr,
                               self.interpolate_num, self.sign_r, self.sign_theta, self.sign_phi, self.data_fp,
-                              self.saver, self.save_when_not_colliding, self.save_handle, self.save_csv)
+                              'json', self.save_when_not_colliding, self.save_handle, self.save_csv)
 
         data_form = []
 
@@ -92,8 +96,15 @@ class RayHandler:
             # calculate total time took
             total_time += time_per_step
 
+            # add to collision detector
+            if g > 0:
+                number_of_collisions += 1
 
-        print(f'Took {total_time}s.')
+        self.save_exp.add_setup_information(self.alpha_min, self.alpha_max, self.beta_min, self.beta_max)
+        self.save_exp.add_numeric_information(self.resolution, total_time, number_of_collisions)
+        self.save_exp.save()
+
+        #print(f'Took {total_time}s.')
 
     def step(self, solver, alpha, beta):
         # main routine to setup and calculate ONE ray from a specific solver (important for multithredding) and
