@@ -1,0 +1,31 @@
+{
+    "observer_position": {
+        "r_obs": 35.0,
+        "theta_obs": 1.0,
+        "phi_obs": 0.0
+    },
+    "emitter_position": {
+        "r_em": 8.0,
+        "theta_em": 1.5707963267948966,
+        "phi_em": 0.0
+    },
+    "emitter_geometry": {
+        "s": 0.0,
+        "rho": 0.5
+    },
+    "screen_range": {
+        "alpha_min": -1.0,
+        "alpha_max": 1.0,
+        "beta_min": -6.0,
+        "beta_max": -4.0,
+        "resolution": 10
+    },
+    "numerics": {
+        "start": 0,
+        "stop": 70,
+        "num": 10000,
+        "relerr": 1e-07,
+        "abserr": 1e-07,
+        "interp_num": 10000
+    }
+}

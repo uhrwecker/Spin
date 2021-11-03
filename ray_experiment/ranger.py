@@ -22,7 +22,7 @@ class RangeAdjustment:
         self.alpha_centre = 0
         self.beta_centre = 0
 
-    def start(self, guess=(0, 0), fp='./meta_data.txt'):
+    def start(self, guess=(0, 0), fp=''):
         self.alpha_centre, self.beta_centre = guess
 
         initial_hit = False
@@ -46,13 +46,19 @@ class RangeAdjustment:
         while not best_rho:
             best_rho = self.check_hits()
 
+        print('Range found! Check if it is ok ...')
         self.width *= 1.1  # plus 10 percent
         self.resolution = 10
         self.ray.change_ranges(self.alpha_centre - self.width, self.alpha_centre + self.width,
                                self.beta_centre - self.width, self.beta_centre + self.width, self.resolution)
         info, number_of_collisions, hit_data = self.ray.run()
 
-        self.save_range(number_of_collisions, fp)
+        if fp:
+            self.save_range(number_of_collisions, fp)
+
+        print('Finding range done! Continue...')
+
+        return self.ray
 
     def check_hits(self):
         hit = False
