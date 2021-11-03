@@ -1,6 +1,7 @@
 import json
 import configparser as cp
 import pandas as pd
+import os
 
 
 class ExperimentSaver:
@@ -43,6 +44,8 @@ class ExperimentSaver:
     def save(self, handle=None):
         if not handle:
             handle = 'experiment_config'
+        if not os.path.isdir(self.fp):
+            os.mkdir(self.fp)
 
         if self.save_format == 'config' or self.save_format == 'cfg':
             with open(self.fp + handle + '.cfg', 'w') as file:

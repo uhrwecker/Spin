@@ -10,9 +10,10 @@ class SignImpactSchwarzschild:
         self.rem, self.tem, self.pem = position
         self.robs, self.tobs, self.pobs = observer_position
 
-        self.check_observer_collision()
+        self.problem = self.check_observer_collision()
 
     def check_observer_collision(self):
+        problem_flag = False
         # all sign combinations, in order if likelihood:
         signs = [(-1, -1, -1), (1, -1, -1), (-1, 1, -1), (1, 1, -1),
                  (-1, -1, 1), (1, -1, 1), (-1, 1, 1), (1, 1, 1)]
@@ -37,7 +38,8 @@ class SignImpactSchwarzschild:
                 best_signs = sign_comb
 
         if not dist < 1e-1:
-            raise ValueError(f'Somethings not quite right here! Smallest distance {dist}.')
+            print(f'Somethings not quite right here! Smallest distance {dist}.')
+            problem_flag = True
 
         sign_r = best_signs[0]
         sign_q = best_signs[1]
@@ -45,6 +47,8 @@ class SignImpactSchwarzschild:
 
         self.solver.change_signs(sign_r=sign_r, sign_q=sign_q, sign_l=sign_l, recalc=False)
         self.solver.change_emission_point(self.rem, self.tem, self.pem)
+
+        return problem_flag
 
     def calculate_initial_velocities(self):
         return self.solver.dt, self.solver.dr, self.solver.dtheta, self.solver.dphi

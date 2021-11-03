@@ -7,7 +7,7 @@
     "emitter_position": {
         "r_em": 8.0,
         "theta_em": 1.5707963267948966,
-        "phi_em": 0.0
+        "phi_em": 6
     },
     "emitter_geometry": {
         "s": 0.0,
@@ -18,7 +18,7 @@
         "alpha_max": 1.0,
         "beta_min": -6.0,
         "beta_max": -4.0,
-        "resolution": 50
+        "resolution": 100
     },
     "numerics": {
         "start": 0,

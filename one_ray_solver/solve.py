@@ -82,25 +82,15 @@ class OneRaySolver:
 
         # step 3a: save the light ray that is not colliding
         if not collision_flag:
-
-            self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
-            self.saver.add_emitter_info(self.s, self.rho, 0, 0)
-            self.saver.add_constants_of_motion(0, 0, 0)
-            self.saver.add_initial_data_info(0, 0, 0, 0, 0, 0, 0, 0)
-            self.saver.add_momenta_info(0, 0, 0, 0, 0, 0, 0, 0)
-            self.saver.add_numerics_info(self.start, self.stop, self.ray_num, self.abserr, self.relerr,
-                                         self.interpolate_num, 0)
-            self.saver.add_velocities_info(0, 0, 0, 0, 0, 0, 0)
-
-            if self.save_even_when_not_colliding_flag and self.save_data:
-                self.saver.save(self.save_handle)
-
-            return None, self.saver.config
+            return self._no_collision()
 
         # step 3b: continue with the colliding light ray
         else:
             # step 4: check the signs of initial velocities at impact
             self.checker = check.SignImpactSchwarzschild(sol, collision_point, [self.robs, self.tobs, self.pobs])
+            if self.checker.problem:
+                return self._no_collision()
+
             sigma, ray = self.checker._solve()
             dt, dr, dtheta, dphi = self.checker.calculate_initial_velocities()
             pt, pr, ptheta, pphi = self.checker.calculate_initial_momenta_general()
@@ -150,3 +140,18 @@ class OneRaySolver:
                                             self.sign_r, self.sign_theta, self.sign_phi)
 
         return sol
+
+    def _no_collision(self):
+        self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
+        self.saver.add_emitter_info(self.s, self.rho, 0, 0)
+        self.saver.add_constants_of_motion(0, 0, 0)
+        self.saver.add_initial_data_info(0, 0, 0, 0, 0, 0, 0, 0)
+        self.saver.add_momenta_info(0, 0, 0, 0, 0, 0, 0, 0)
+        self.saver.add_numerics_info(self.start, self.stop, self.ray_num, self.abserr, self.relerr,
+                                     self.interpolate_num, 0)
+        self.saver.add_velocities_info(0, 0, 0, 0, 0, 0, 0)
+
+        if self.save_even_when_not_colliding_flag and self.save_data:
+            self.saver.save(self.save_handle)
+
+        return None, self.saver.config

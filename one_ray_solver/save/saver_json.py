@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+import os
 
 from one_ray_solver.save import saver_abc
 
@@ -77,6 +78,9 @@ class DataSaverJson(saver_abc.DataSaverABC):
             alpha = self.config['OBSERVER']['alpha']
             beta = self.config['OBSERVER']['beta']
             handle = f'{s}_{alpha}_{beta}'
+
+        if not os.path.isdir(self.fp):
+            os.mkdir(self.fp)
 
         with open(self.fp + handle + '.json', 'w') as file:
             json.dump(self.config, file, indent=4)
