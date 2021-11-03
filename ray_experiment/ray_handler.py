@@ -56,7 +56,7 @@ class RayHandler:
         self.sign_phi = sign_phi
 
         self.fp = fp
-        self.data_fp = self.setup()
+        self.data_fp = self.setup(make=False)
 
         self.saver = saver
         self.save_exp = save_experiment.ExperimentSaver(self.fp, self.saver)
@@ -68,9 +68,9 @@ class RayHandler:
         self.save_config = save_config
         self.save_data = save_data
 
-    def setup(self):
+    def setup(self, make=True):
         data_fp = self.fp + 'data/'
-        if not os.path.isdir(data_fp):
+        if not os.path.isdir(data_fp) and make:
             os.mkdir(data_fp)
 
         return data_fp
