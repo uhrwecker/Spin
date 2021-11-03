@@ -47,7 +47,8 @@ class RangeAdjustment:
             best_rho = self.check_hits()
 
         print('Range found! Check if it is ok ...')
-        self.width *= 1.1  # plus 10 percent
+        self.width *= 1.25  # plus 25 percent
+        self.width += 0.25  # plus at least 0.25
         self.resolution = 10
         self.ray.change_ranges(self.alpha_centre - self.width, self.alpha_centre + self.width,
                                self.beta_centre - self.width, self.beta_centre + self.width, self.resolution)

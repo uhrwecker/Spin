@@ -62,9 +62,15 @@ class ExperimentSaver:
 
         data = data[data[:, 0].argsort()]
 
-        alpha = data[:, 0]
-        beta = data[:, 1]
-        g = data[:, 2]
+        new_data = []
+        batched = np.split(data, int(np.sqrt(len(data))))
+        for item in batched:
+            new_data.append(item[item[:, 1].argsort()])
+        new_data = np.array(new_data).reshape((len(data), 3))
+
+        alpha = new_data[:, 0]
+        beta = new_data[:, 1]
+        g = new_data[:, 2]
 
         df = pd.DataFrame({'alpha': alpha, 'beta': beta, 'redshift': g})
 
