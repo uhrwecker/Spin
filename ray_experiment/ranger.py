@@ -54,6 +54,9 @@ class RangeAdjustment:
                                self.beta_centre - self.width, self.beta_centre + self.width, self.resolution)
         info, number_of_collisions, hit_data = self.ray.run()
 
+        if self.width > 2:
+            print(self.alpha_centre, self.beta_centre, self.width)
+            raise ValueError('That did not work.')
         if fp:
             self.save_range(number_of_collisions, fp)
 
@@ -108,7 +111,7 @@ class RangeAdjustment:
         alpha_width = np.abs(np.amax(hit_data[:, 0]) - np.amin(hit_data[:, 0])) / 2
         beta_width = np.abs(np.amax(hit_data[:, 1]) - np.amin(hit_data[:, 1])) / 2
 
-        alpha_centre = np.mean(hit_data[:, 0])
-        beta_centre = np.mean(hit_data[:, 1])
+        alpha_centre = np.median(hit_data[:, 0])
+        beta_centre = np.median(hit_data[:, 1])
 
         return np.amax([alpha_width, beta_width]), alpha_centre, beta_centre
