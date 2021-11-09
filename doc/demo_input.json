@@ -10,7 +10,7 @@
         "phi_em": 6
     },
     "emitter_geometry": {
-        "s": 0.0,
+        "s": 0.1,
         "rho": 0.5
     },
     "screen_range": {
@@ -18,7 +18,7 @@
         "alpha_max": 1.0,
         "beta_min": -6.0,
         "beta_max": -4.0,
-        "resolution": 100
+        "resolution": 50
     },
     "numerics": {
         "start": 0,

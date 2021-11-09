@@ -14,15 +14,16 @@ def plot(fp, m):
     g = g.reshape(n, n).T[::-1]
 
     cmap = pl.cm.cool_r
-    norm = mp.colors.Normalize(0.2, 2.4)
+    norm = mp.colors.Normalize(0.35363129857366227, 1.5899301325738688)
 
     ax.imshow(g, extent=(np.amin(data[:, 0]), np.amax(data[:, 0]),
                          np.amin(data[:, 1]), np.amax(data[:, 1])), norm=norm, cmap=cmap)
 
-    ax.set_xlim(-10, 10)
-    ax.set_ylim(-10, 10)
+    #ax.set_xlim(-10, 10)
+    #ax.set_ylim(-10, 10)
     #ax.imshow(g, extent=(-10, 10, -10, 10))
-    pl.savefig(f'/home/jan-menno/Data/03_11_2021/s005/{m}.png')
+    #pl.show()
+    pl.savefig(f'/home/jan-menno/Data/03_11_2021/s-01/images/{m}.png')
     ax.clear()
 
     return np.nanmin(g), np.nanmax(g)
@@ -33,7 +34,7 @@ phis = np.linspace(0, np.pi*2, num=64, endpoint=False)
 gmax = []
 gmin = []
 for n, phi in enumerate(phis):
-    fp = f'/home/jan-menno/Data/03_11_2021/s005/{phi}/redshift.csv'
+    fp = f'/home/jan-menno/Data/03_11_2021/s-01/{phi}/redshift.csv'
     g1, g2 = plot(fp, n)
     gmin.append(g1)
     gmax.append(g2)

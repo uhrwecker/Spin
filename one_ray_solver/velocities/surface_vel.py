@@ -22,4 +22,4 @@ class SurfaceVelocityRigidSphere(velocity_abc.VelocityABC):
             print('Velocities too high; returning nan.')
             return np.nan, np.nan, np.nan
 
-        return (u1, u3), 1 / np.sqrt(1 - u1 ** 2 - u3 ** 2)
+        return (-u1, -u3), 1 / np.sqrt(1 - u1 ** 2 - u3 ** 2)

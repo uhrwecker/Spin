@@ -39,9 +39,12 @@ def convert_position_sphere(position, centre, geometry):
     y -= r0 * np.sin(p0) * np.sin(t0)
     z -= r0 * np.cos(t0)
 
-    r = np.sqrt(x ** 2 + y ** 2 + z ** 2)
+    xn = np.cos(p0) * x + np.sin(p0) * y
+    yn = -np.sin(p0) * x + np.cos(p0) * y
+
+    r = np.sqrt(xn ** 2 + yn ** 2 + z ** 2)
     theta = np.arccos(z / r)
-    phi = get_phi(x, y, z)
+    phi = get_phi(xn, yn, z)
 
     return r, theta, phi
 

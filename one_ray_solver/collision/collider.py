@@ -35,6 +35,9 @@ class Collider:
 
         # get the local coordinates, depending on the geometry:
         rr, T, P = sphere.convert_position_sphere((r_col, t_col, p_col), (self.rem, self.tem, self.pem), self.geometry)
+        if P < 0:
+            P += np.pi * 2
+
         if not np.isclose(rr, rho, rtol=1e-2, atol=1e-1):
             print('Numerically, there seems to be an error, as the collision detected. See the corresponding developer.')
 

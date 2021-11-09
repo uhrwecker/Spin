@@ -107,6 +107,8 @@ class OneRaySolver:
             g = redshift.g(p0, p1, p3, orbit_velocity, gamma_orb, relative_vel, gamma_rel_vel,
                            surf_vel_u1, surf_vel_u3, gamma_surf)
 
+            g = 1 / np.sqrt(1 - 2 / self.robs) * 1 / g
+
             # step 6: save!
             self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
             self.saver.add_emitter_info(self.s, self.rho, *local_coord)
