@@ -2,6 +2,7 @@ import numpy as np
 
 import matplotlib.pyplot as pl
 import matplotlib as mp
+import pandas as pd
 
 
 def check_for_missing_interlinks(data):
@@ -23,9 +24,8 @@ def check_for_missing_interlinks(data):
     return g.flatten(), missing_interlinks
 
 
-def fix_missing_interlinks(row, n, min_batch_size=5):
+def fix_missing_interlinks(row, n):
     idx = np.arange(0, n)[~np.isnan(row)]
-    num = idx[-1] - idx[0]
 
     if idx[1] - idx[0] > 1:
         row[idx[0]] = np.nan
@@ -90,10 +90,8 @@ def plot_g(data):
     ax.clear()
 
 
-def main():
+def repair(fp):
     import os
-
-    fp = '/home/jan-menno/Data/03_11_2021/s0/'
 
     phis = [f.path for f in os.scandir(fp) if f.is_dir() and not 'images' in f.path]
     phis.sort()
@@ -106,12 +104,14 @@ def main():
         redshift = np.loadtxt(f, delimiter=',', skiprows=1)
         g = redshift[:, 2]
 
-        plot_g(redshift)
         redshift[:, 2], flag = check_for_missing_interlinks(g)
         if flag:
-            print('new')
-            plot_g(redshift)
+            print(f'- Found problem at phi = {phi}; repairing...')
 
+            alpha = redshift[:, 0]
+            beta = redshift[:, 1]
+            g = redshift[:, 2]
 
-if __name__ == '__main__':
-    main()
+            df = pd.DataFrame({'alpha': alpha, 'beta': beta, 'redshift': g})
+
+            df.to_csv(f + '.csv', index=False)

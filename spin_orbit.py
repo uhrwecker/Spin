@@ -4,6 +4,7 @@ import argparse
 
 from ray_experiment.ray_handler import RayHandler
 from ray_experiment.orbit_handler import OrbitHandler
+from repair import fix
 
 
 def get_parser():
@@ -28,6 +29,11 @@ def get_parser():
                         help='Disable the saving of the experiment config. Not recommended.')
     parser.add_argument('--colliding', action='store_true', dest='save_even_when_not_colliding', default=False,
                         help='Save the light ray config, even if the light ray did not collide with the emitter.')
+    parser.add_argument('-nr', '--no-repair', action='store_false', dest='repair', default=True,
+                        help='Runs repair routine on any damaged or corrupted -redshift- files. Highly recommened. '
+                             'Works only with -r flag on, as it only works on the redshift files.')
+    parser.add_argument('--repair_only', action='store_true', dest='repair_only', default=False,
+                        help='Only run the repair tool on existing redshift data; no further simulation will be done.')
 
     return parser
 
@@ -58,8 +64,14 @@ def main():
                     save_csv=args.save_csv, save_redshift=args.save_redshift,
                     save_config=~args.dont_save_exp_config, save_data=args.save)
 
-    oh = OrbitHandler(rh, number_of_orbit_points=args.number, meta_data=args.save_range, save_fp=args.save)
-    oh.start()
+    if not args.repair_only:
+        print('Starting the run...')
+        oh = OrbitHandler(rh, number_of_orbit_points=args.number, meta_data=args.save_range, save_fp=args.save)
+        oh.start()
+
+    if (args.save_redshift and args.repair) or args.repair_only:
+        print('Start repair tool...')
+        fix.repair(save_fp)
 
     took = time.time() - start_time
     print(f'Done! \nWhole calculation took {took}s (or {took / 60}min).')

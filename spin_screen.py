@@ -5,6 +5,7 @@ import json
 import time
 
 from ray_experiment import ranger, ray_handler
+from repair import fix
 
 
 def get_parser():
@@ -29,6 +30,11 @@ def get_parser():
                         help='Save the light ray config, even if the light ray did not collide with the emitter.')
     parser.add_argument('-d', '--debug', action='extend', nargs=2, type=float, default=[],
                         help='Debug mode. Specify a pair of (alpha, beta) to calculate a single ray from, and plot it.')
+    parser.add_argument('-nr', '--no-repair', action='store_false', dest='repair', default=True,
+                        help='Runs repair routine on any damaged or corrupted -redshift- files. Highly recommened. '
+                             'Works only with -r flag on, as it only works on the redshift files.')
+    parser.add_argument('--repair_only', action='store_true', dest='repair_only', default=False,
+                        help='Only run the repair tool on existing redshift data; no further simulation will be done.')
 
     return parser
 
@@ -69,8 +75,13 @@ def main():
             rh.save_config = ~args.dont_save_exp_config
             rh.save_data = args.save
 
-        print('Starting the run...')
-        rh.run()
+        if not args.repair_only:
+            print('Starting the run...')
+            rh.run()
+
+        if args.save_redshift and args.repair:
+            print('Start repair tool...')
+            fix.repair(save_fp)
 
     elif args.debug:
         alpha, beta = args.debug
