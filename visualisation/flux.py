@@ -1,6 +1,7 @@
 import matplotlib.pyplot as pl
 import numpy as np
 import os
+import scipy.signal as signal
 
 
 class FluxPlotter:
@@ -27,7 +28,7 @@ class FluxPlotter:
             flux.append(flux[0])
             phis.append(np.pi*2)
 
-            flux = self._check_for_outliers(flux)
+            flux, phis = _check_for_outliers(flux, phis)
 
             self.ax.plot(phis, flux, label=fp)
             self.ax.set_xlim(0, np.pi * 2)
@@ -67,24 +68,48 @@ class FluxPlotter:
             n = int(np.sqrt(len(g)))
             g = g.reshape(n, n)[::-1].T
 
+
+
             data.append((g, np.amin(redshift[:, 0]), np.amax(redshift[:, 0]),
                          np.amin(redshift[:, 1]), np.amax(redshift[:, 1]), float(p)))
 
         return data, phis
 
-    def _check_for_outliers(self, data):
-        import scipy.signal as signal
 
-        try:
-            inte, _ = signal.find_peaks(-np.array(data))[0]
-        except:
-            print('WARNING')
+def _check_for_outliers(data, phi):
+    data = np.array(data)
+    phi = np.array(phi)
 
-        data[1] = np.mean([data[0], data[2]])
-        data[17] = np.mean([data[16], data[18]])
-        data[47] = np.mean([data[48], data[46]])
+    inte, _ = signal.find_peaks(1/data)
+    arrx = []
+    for item in inte:
+        arrx.append(item - 1)
+        arrx.append(item)
+        arrx.append(item + 1)
 
-        return data
+    data = np.delete(data, arrx)
+    phi = np.delete(phi, arrx)
+
+    inte, _ = signal.find_peaks(data)
+    arrx = []
+    for item in inte:
+        arrx.append(item - 1)
+        arrx.append(item)
+        arrx.append(item + 1)
+
+    data = np.delete(data, arrx)
+    phi = np.delete(phi, arrx)
+
+    new_x = np.linspace(0, 2*np.pi, num=1000)
+    data = np.interp(new_x, phi, data)
+    #data[33:36] = [np.mean([data[31], data[36]]) for n in range(3)]
+    #data[35] = np.nan
+    #data[92:95] = [np.mean([data[91], data[95]]) for n in range(3)]
+
+    #data[17] = np.mean([data[16], data[18]])
+    #data[47] = np.mean([data[48], data[46]])
+
+    return data, new_x#phi
 
 
 ff = FluxPlotter(fp=['/home/jan-menno/Data/03_11_2021/s-015/',
