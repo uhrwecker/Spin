@@ -17,9 +17,13 @@ def check_for_missing_interlinks(data):
         if idx[idx > 1].size > 0:
             if not idx[idx > 1].sum() == 0:
                 missing_interlinks = True
+
                 row = fix_missing_interlinks(row, n)
 
-        g[m] = row
+        row[np.isnan(row)] = 0.0
+
+        if missing_interlinks:
+            g[m] = row
 
     return g.flatten(), missing_interlinks
 
@@ -89,6 +93,25 @@ def plot_g(data):
     pl.show()
     ax.clear()
 
+def fix_vertical_flip(g):
+    maxmin = []
+    for column in g.T:
+        col_x = np.arange(0, len(column))
+        isnan_mask = ~np.isnan(column)
+        column = column[isnan_mask]
+
+        if column.size:
+            diff = column[:-1] / column[1:]
+            diff2 = diff[diff > 2].tolist()
+            diff2 += diff[diff < 0.8].tolist()
+            idx = np.where(diff == diff2)
+            maxmin += col_x[idx].tolist()
+
+    print(maxmin)
+    print(np.amax(maxmin))
+
+
+
 
 def repair(fp):
     import os
@@ -114,4 +137,21 @@ def repair(fp):
 
             df = pd.DataFrame({'alpha': alpha, 'beta': beta, 'redshift': g})
 
-            df.to_csv(f + '.csv', index=False)
+            df.to_csv(f, index=False)
+
+
+def main():
+    fp = '/home/jan-menno/Data/fix/s-015/6.135923151542564/redshift.csv'
+    data = np.loadtxt(fp, delimiter=',', skiprows=1)
+
+    red = data[:, 2]
+    red[red == 0] = np.nan
+    n = int(np.sqrt(len(red)))
+    g = red.reshape(n, n)
+
+
+    fix_vertical_flip(g)
+    plot_g(data)
+
+if __name__ == '__main__':
+    main()

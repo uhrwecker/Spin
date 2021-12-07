@@ -11,25 +11,40 @@ class FluxPlotter:
 
         self.fp = fp
 
+        self.data = None
+
     def plot_monochrome(self):
         if not type(self.fp) == list:
             self.fp = [self.fp]
 
         for fp in self.fp:
-            data, _ = self.load_redshift(fp)
+            data, _, ng = self.load_redshift(fp)
 
             flux = []
+            fl22 = []
             phis = []
-            for redshift in data:
+            for redshift, ng3 in zip(data, ng):
                 fl, phi = self.calculate_flux(redshift)
                 flux.append(fl)
+                if fp == self.fp[0]:
+                    fl2, phi2 = self.calculate_flux(ng3)
+                    fl22.append(fl2)
                 phis.append(phi)
 
             flux.append(flux[0])
+            if fp == self.fp[0]:
+                fl22.append(fl22[0])
+                self.data = fl22
             phis.append(np.pi*2)
 
             flux, phis = _check_for_outliers(flux, phis)
+            if fp == self.fp[0]:
+                fl22, phis = _check_for_outliers(fl22, phis)
+                fl22 = fl22[::-1]
+                fl22[33:35] = [np.mean([fl22[32], fl22[35]]), np.mean([fl22[32], fl22[35]])]
+                fl22[93] = np.mean([fl22[92], fl22[94]])
 
+                self.ax.plot(phis, np.array(fl22)-400, label='no orbit vel')
             self.ax.plot(phis, flux, label=fp)
             self.ax.set_xlim(0, np.pi * 2)
             # ax.set_ylim(0, 2.8)
@@ -57,6 +72,7 @@ class FluxPlotter:
         phis.sort()
 
         data = []
+        d2 = []
         for phi in phis:
             if 'images' in phi:
                 continue
@@ -64,17 +80,42 @@ class FluxPlotter:
             f = phi + '/redshift.csv'
             redshift = np.loadtxt(f, delimiter=',', skiprows=1)
             g = redshift[:, 2]
+
             g[g == 0] = np.nan
             n = int(np.sqrt(len(g)))
+            if not self.data:
+                ng = get_new_g(redshift, f)
+                ng = ng[:, 2].reshape(n, n)[::-1].T
             g = g.reshape(n, n)[::-1].T
-
-
 
             data.append((g, np.amin(redshift[:, 0]), np.amax(redshift[:, 0]),
                          np.amin(redshift[:, 1]), np.amax(redshift[:, 1]), float(p)))
+            if not self.data:
+                d2.append((ng, np.amin(redshift[:, 0]), np.amax(redshift[:, 0]),
+                            np.amin(redshift[:, 1]), np.amax(redshift[:, 1]), float(p)))
+            else:
+                d2.append(None)
 
-        return data, phis
+        return data, phis, d2
 
+
+def get_new_g(g, f):
+    f = f[30:]
+    redshift = np.loadtxt('/home/jan-menno/Data/fix/cha' + f, delimiter=',', skiprows=1)
+    data = []
+    for row in g:
+        #print(row)
+        if row[0] in redshift[:, 0] and row[1] in redshift[:, 1]:
+            choice = redshift[row[0] == redshift[:, 0]]
+            ch = choice[row[1] == choice[:, 1]]
+            if ch.size:
+                data.append(ch[0])
+            else:
+                data.append(row)
+        else:
+            data.append(row)
+
+    return np.array(data)
 
 def _check_for_outliers(data, phi):
     start = 122
@@ -96,47 +137,9 @@ def _check_for_outliers(data, phi):
     print(len(data))
 
     return data, phi
-    #data = np.array(data)
-    #phi = np.array(phi)
-
-    #inte, _ = signal.find_peaks(1/data)
-    #arrx = []
-    #for item in inte:
-    #    arrx.append(item - 1)
-    #    arrx.append(item)
-    #    arrx.append(item + 1)
-
-    #data = np.delete(data, arrx)
-    #phi = np.delete(phi, arrx)
-
-    #inte, _ = signal.find_peaks(data)
-    #arrx = []
-    #for item in inte:
-    #    arrx.append(item - 1)
-    #    arrx.append(item)
-    #    arrx.append(item + 1)
-
-    #data = np.delete(data, arrx)
-    #phi = np.delete(phi, arrx)
-
-    #new_x = np.linspace(0, 2*np.pi, num=1000)
-    #data = np.interp(new_x, phi, data)
-    #data[33:36] = [np.mean([data[31], data[36]]) for n in range(3)]
-    #data[35] = np.nan
-    #data[92:95] = [np.mean([data[91], data[95]]) for n in range(3)]
-
-    #data[17] = np.mean([data[16], data[18]])
-    #data[47] = np.mean([data[48], data[46]])
-
-    #return data, new_x#phi
 
 
 ff = FluxPlotter(fp=['/home/jan-menno/Data/fix/s-015/',
-                     '/home/jan-menno/Data/fix/s-01/',
-                     '/home/jan-menno/Data/fix/s-005/',
-                     '/home/jan-menno/Data/fix/s0/',
-                     '/home/jan-menno/Data/fix/s005/',
-                     '/home/jan-menno/Data/fix/s01/',
-                     '/home/jan-menno/Data/fix/s015/'])
+                     '/home/jan-menno/Data/fix/s0/'])
 ff.plot_monochrome()
 ff.show()
