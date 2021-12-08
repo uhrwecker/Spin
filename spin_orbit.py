@@ -62,7 +62,7 @@ def main():
     elif geo['shape'] == 'ellipsoid':
         geometry = [geo['a']]
         c = calculate_polar_semi_axis(geo['s'], geo['a'])
-        geometry.append(c)
+        geometry.append(c[0])
     else:
         raise ValueError
 

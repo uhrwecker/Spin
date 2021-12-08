@@ -9,7 +9,7 @@ def collision_with_object(r, t, p, position, geometry):
     r0, t0, p0 = position
     a, c = geometry
 
-    re, te, pe = convert_position_ellipsoid((r, t, p), position, geometry)#
+    re, te, pe = (r, t, p)#convert_position((r, t, p), position, geometry)#
 
     x = re * np.cos(pe) * np.sin(te)
     y = re * np.sin(pe) * np.sin(te)
@@ -19,9 +19,9 @@ def collision_with_object(r, t, p, position, geometry):
     yc = r0 * np.sin(p0) * np.sin(t0)
     zc = r0 * np.cos(t0)
 
-    quest = (x - xc)**2 / a**2 + (y - yc)**2 / 2 + (z - zc)**2 / c**2
+    quest = (x - xc)**2 / a**2 + (y - yc)**2 / a**2 + (z - zc)**2 / c**2
 
-    if np.amin(quest) < 1:
+    if np.nanmin(quest) < 1:
         idx = np.where(quest < 1)[0][0]
         return r[idx], t[idx], p[idx]
 
@@ -46,8 +46,10 @@ def convert_position(position, centre, geometry):
     yn = -np.sin(p0) * x + np.cos(p0) * y
 
     r = np.sqrt(xn ** 2 / a**2 + yn ** 2 / a**2 + z ** 2 / c**2) # not really sensible
-    theta = np.arccos(z / c)
-    phi = get_phi(xn, yn, z)
+    theta = np.arccos(z / c)#np.arcsin(a / np.sqrt(xn**2 + yn**2))
+    #print(z / c)
+    #print(theta, np.arcsin(a / np.sqrt(xn**2 + yn**2)))
+    phi = get_phi(xn, yn, z)#np.array([get_phi(xn[n], yn[n], z[n]) for n in range(len(xn))])
 
     return r, theta, phi
 
