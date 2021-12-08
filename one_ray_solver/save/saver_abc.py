@@ -10,7 +10,7 @@ class DataSaverABC:
         """Add observer info to your internal configuration."""
         raise NotImplementedError('Add observer info to your saver class.')
 
-    def add_emitter_info(self, s, rho, theta, phi):
+    def add_emitter_info(self, s, geometry, theta, phi, shape):
         """Add emitter info to your internal configuration."""
         raise NotImplementedError('Add emitter info to your saver class.')
 

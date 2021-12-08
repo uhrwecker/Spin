@@ -12,9 +12,9 @@ from one_ray_solver.velocities import *
 
 
 class OneRaySolver:
-    def __init__(self, s=0., rem=8., tem=np.pi/2, pem=0., rho=0.5, robs=35., tobs=1., pobs=0.,
+    def __init__(self, s=0., rem=8., tem=np.pi/2, pem=0., geometry=(0.5,), robs=35., tobs=1., pobs=0.,
                  alpha=0., beta=-5., m=1, start=0, stop=70, num=100000, abserr=1e-7, relerr=1e-7, interp_num=10000,
-                 sign_r=-1, sign_theta=1, sign_phi=1, fp='./', saver='json',
+                 sign_r=-1, sign_theta=1, sign_phi=1, fp='./', saver='json', shape='sphere',
                  save_even_when_not_colliding=True, save_handle=None,
                  save_csv=False, save_data=True):
         self.s = s
@@ -23,7 +23,7 @@ class OneRaySolver:
         self.tem = tem
         self.pem = pem
 
-        self.rho = rho
+        self.geometry = geometry
 
         self.robs = robs
         self.tobs = tobs
@@ -41,12 +41,13 @@ class OneRaySolver:
         self.relerr = relerr
 
         self.interpolate_num = interp_num
+        self.shape = shape
 
         self.sign_r = sign_r
         self.sign_theta = sign_theta
         self.sign_phi = sign_phi
 
-        self.collider = collider.Collider(self.rem, self.tem, self.pem, [self.rho], self.interpolate_num)
+        self.collider = collider.Collider(self.rem, self.tem, self.pem, self.geometry, self.interpolate_num, self.shape)
         if saver == 'json':
             self.saver = saver_json.DataSaverJson(fp)
         elif saver == 'config':
@@ -100,7 +101,13 @@ class OneRaySolver:
             (orbit_velocity, ), gamma_orb = self.orb.get_velocity()
             (relative_vel, ), gamma_rel_vel = self.rel.get_velocity()
 
-            surface = SurfaceVelocityRigidSphere(self.s, (self.rho, local_coord[0], local_coord[1]))
+            if self.shape == 'sphere':
+                surface = SurfaceVelocityRigidSphere(self.s, (self.geometry[0], local_coord[0], local_coord[1]))
+            elif self.shape == 'ellipsoid':
+                surface = SurfaceVelocityMaclaurinEllipsoid(self.s, (self.geometry[0], local_coord[0], local_coord[1]))
+            else:
+                raise ValueError(f'The shape {self.shape} was not understood; must be either -sphere- or -ellipsoid-')
+
             (surf_vel_u1, surf_vel_u3), gamma_surf = surface.get_velocity()
 
             # step 6: calculate the redshift of the ray
@@ -111,7 +118,7 @@ class OneRaySolver:
 
             # step 6: save!
             self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
-            self.saver.add_emitter_info(self.s, self.rho, *local_coord)
+            self.saver.add_emitter_info(self.s, self.geometry, *local_coord, self.shape)
             self.saver.add_constants_of_motion(self.lamda, self.qu, g)
             self.saver.add_initial_data_info(0, *collision_point, dt, dr, dtheta, dphi)
             self.saver.add_momenta_info(pt, pr, ptheta, pphi, p0, p1, p2, p3)
@@ -145,7 +152,7 @@ class OneRaySolver:
 
     def _no_collision(self):
         self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
-        self.saver.add_emitter_info(self.s, self.rho, 0, 0)
+        self.saver.add_emitter_info(self.s, self.geometry, 0, 0, self.shape)
         self.saver.add_constants_of_motion(0, 0, 0)
         self.saver.add_initial_data_info(0, 0, 0, 0, 0, 0, 0, 0)
         self.saver.add_momenta_info(0, 0, 0, 0, 0, 0, 0, 0)

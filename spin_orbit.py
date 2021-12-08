@@ -4,6 +4,7 @@ import argparse
 
 from ray_experiment.ray_handler import RayHandler
 from ray_experiment.orbit_handler import OrbitHandler
+from one_ray_solver.utility.maclaurin import calculate_polar_semi_axis
 from repair import fix
 
 
@@ -56,10 +57,19 @@ def main():
     if args.save:
         save_fp = args.save
 
-    rh = RayHandler(s=geo['s'], rho=geo['rho'],
+    if geo['shape'] == 'sphere':
+        geometry = (geo['rho'],)
+    elif geo['shape'] == 'ellipsoid':
+        geometry = [geo['a']]
+        c = calculate_polar_semi_axis(geo['s'], geo['a'])
+        geometry.append(c)
+    else:
+        raise ValueError
+
+    rh = RayHandler(s=geo['s'], geometry=geometry,
                     rem=em['r_em'], tem=em['theta_em'], pem=em['phi_em'],
                     robs=obs['r_obs'], tobs=obs['theta_obs'], pobs=obs['phi_obs'],
-                    **screen, m=1, **num, fp=save_fp, saver='json',
+                    **screen, m=1, **num, fp=save_fp, saver='json', shape=geo['shape'],
                     save_even_when_not_colliding=args.save_even_when_not_colliding, save_handle=None,
                     save_csv=args.save_csv, save_redshift=args.save_redshift,
                     save_config=~args.dont_save_exp_config, save_data=args.save)

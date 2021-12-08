@@ -6,6 +6,7 @@ import time
 
 from ray_experiment import ranger, ray_handler
 from repair import fix
+from one_ray_solver.utility.maclaurin import calculate_polar_semi_axis
 
 
 def get_parser():
@@ -56,11 +57,20 @@ def main():
     if args.save:
         save_fp = args.save
 
+    if geo['shape'] == 'sphere':
+        geometry = (geo['rho'],)
+    elif geo['shape'] == 'ellipsoid':
+        geometry = [geo['a']]
+        c = calculate_polar_semi_axis(geo['s'], geo['a'])
+        geometry.append(c)
+    else:
+        raise ValueError
+
     if not args.debug:
-        rh = ray_handler.RayHandler(s=geo['s'], rho=geo['rho'],
+        rh = ray_handler.RayHandler(s=geo['s'], geometry=geometry,
                                     rem=em['r_em'], tem=em['theta_em'], pem=em['phi_em'],
                                     robs=obs['r_obs'], tobs=obs['theta_obs'], pobs=obs['phi_obs'],
-                                    **screen, m=1, **num, fp=save_fp, saver='json',
+                                    **screen, m=1, **num, fp=save_fp, saver='json', shape=geo['shape'],
                                     save_even_when_not_colliding=args.save_even_when_not_colliding, save_handle=None,
                                     save_csv=args.save_csv, save_redshift=args.save_redshift,
                                     save_config=~args.dont_save_exp_config, save_data=args.save)
@@ -88,10 +98,11 @@ def main():
         from one_ray_solver.solve import OneRaySolver
         from visualisation.simple_3d import Simple3DPlotter
 
-        ors = OneRaySolver(s=geo['s'], rho=geo['rho'],
+        ors = OneRaySolver(s=geo['s'], geometry=geometry,
                            rem=em['r_em'], tem=em['theta_em'], pem=em['phi_em'],
                            robs=obs['r_obs'], tobs=obs['theta_obs'], pobs=obs['phi_obs'], m=1, **num,
-                           alpha=0, beta=0, save_even_when_not_colliding=False, save_csv=False, save_data=False)
+                           alpha=0, beta=0, shape=geo['shape'], save_even_when_not_colliding=False,
+                           save_csv=False, save_data=False)
         ors.set_alpha_beta(alpha, beta)
         ray, cfg = ors.solve(full_output=True)
         print(cfg)

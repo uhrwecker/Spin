@@ -1,4 +1,5 @@
-"""Collision function that tests whether or not a light ray passes through an spherical object with radius rho."""
+"""Collision function that tests whether or not a light ray passes through an elliptical object (Maclaurin)
+with eq. semi-major axis a and vertical semi-major axis c."""
 
 import numpy as np
 
@@ -6,20 +7,22 @@ import numpy as np
 def collision_with_object(r, t, p, position, geometry):
     """Return the collision point as a tuple if there is an collision, and an empty list if not."""
     r0, t0, p0 = position
-    rho,  = geometry
+    a, c = geometry
 
-    x = r * np.cos(p) * np.sin(t)
-    y = r * np.sin(p) * np.sin(t)
-    z = r * np.cos(t)
+    re, te, pe = convert_position_ellipsoid((r, t, p), position, geometry)#
 
-    X = r0 * np.cos(p0) * np.sin(t0)
-    Y = r0 * np.sin(p0) * np.sin(t0)
-    Z = r0 * np.cos(t0)
+    x = re * np.cos(pe) * np.sin(te)
+    y = re * np.sin(pe) * np.sin(te)
+    z = re * np.cos(te)
 
-    dist = np.sqrt((x - X) ** 2 + (y - Y) ** 2 + (z - Z) ** 2)
+    xc = r0 * np.cos(p0) * np.sin(t0)
+    yc = r0 * np.sin(p0) * np.sin(t0)
+    zc = r0 * np.cos(t0)
 
-    if np.amin(dist) < rho:
-        idx = np.where(dist < rho)[0][0]
+    quest = (x - xc)**2 / a**2 + (y - yc)**2 / 2 + (z - zc)**2 / c**2
+
+    if np.amin(quest) < 1:
+        idx = np.where(quest < 1)[0][0]
         return r[idx], t[idx], p[idx]
 
     else:
@@ -29,7 +32,7 @@ def collision_with_object(r, t, p, position, geometry):
 def convert_position(position, centre, geometry):
     r, t, p = position
     r0, t0, p0 = centre
-    rho, = geometry
+    a, c = geometry
 
     x = r * np.cos(p) * np.sin(t)
     y = r * np.sin(p) * np.sin(t)
@@ -42,8 +45,8 @@ def convert_position(position, centre, geometry):
     xn = np.cos(p0) * x + np.sin(p0) * y
     yn = -np.sin(p0) * x + np.cos(p0) * y
 
-    r = np.sqrt(xn ** 2 + yn ** 2 + z ** 2)
-    theta = np.arccos(z / r)
+    r = np.sqrt(xn ** 2 / a**2 + yn ** 2 / a**2 + z ** 2 / c**2) # not really sensible
+    theta = np.arccos(z / c)
     phi = get_phi(xn, yn, z)
 
     return r, theta, phi

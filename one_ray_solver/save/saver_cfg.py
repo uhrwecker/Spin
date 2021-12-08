@@ -25,9 +25,14 @@ class DataSaverConfig(saver_abc.DataSaverABC):
         self.config['OBSERVER']['alpha'] = str(alpha)
         self.config['OBSERVER']['beta'] = str(beta)
 
-    def add_emitter_info(self, s, rho, theta, phi):
+    def add_emitter_info(self, s, geometry, theta, phi, shape):
+        self.config['EMITTER']['shape'] = shape
         self.config['EMITTER']['s'] = str(s)
-        self.config['EMITTER']['rho'] = str(rho)
+        if shape == 'sphere':
+            self.config['EMITTER']['rho'] = str(geometry[0])
+        elif shape == 'ellipsoid':
+            self.config['EMITTER']['a'] = str(geometry[0])
+            self.config['EMITTER']['c'] = str(geometry[1])
         self.config['EMITTER']['Theta'] = str(theta)
         self.config['EMITTER']['Phi'] = str(phi)
 
