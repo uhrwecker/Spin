@@ -115,7 +115,7 @@ class OneRaySolver:
             g = redshift.g(p0, p1, p3, orbit_velocity, gamma_orb, relative_vel, gamma_rel_vel,
                            surf_vel_u1, surf_vel_u3, gamma_surf)
 
-            g = 1 / np.sqrt(1 - 2 / self.robs) * 1 / g
+            g = 1 / np.sqrt(1 - 2 / self.robs) * 1 / g # TODO change E_obs
 
             # step 6: save!
             self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
@@ -145,7 +145,7 @@ class OneRaySolver:
     def get_solver(self):
         # this method will allow the user to access a solver object, without running the whole solver wrapper.
         # especially useful for plotting shenanigans.
-        sol = solver.ODESolverSchwazrschild(self.robs, self.tobs, self.pobs, 0, 0, self.m,
+        sol = solver.ODESolverKerr(self.robs, self.tobs, self.pobs, 0, 0, self.m, self.bha,
                                             self.start, self.stop, self.ray_num, self.abserr, self.relerr,
                                             self.sign_r, self.sign_theta, self.sign_phi)
 
@@ -153,7 +153,7 @@ class OneRaySolver:
 
     def _no_collision(self):
         self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
-        self.saver.add_emitter_info(self.s, self.geometry, 0, 0, self.shape)
+        self.saver.add_emitter_info(self.s, self.bha, self.geometry, 0, 0, self.shape)
         self.saver.add_constants_of_motion(0, 0, 0)
         self.saver.add_initial_data_info(0, 0, 0, 0, 0, 0, 0, 0)
         self.saver.add_momenta_info(0, 0, 0, 0, 0, 0, 0, 0)

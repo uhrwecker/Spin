@@ -54,14 +54,35 @@ class SignImpactSchwarzschild:
         return self.solver.dt, self.solver.dr, self.solver.dtheta, self.solver.dphi
 
     def calculate_initial_momenta_general(self):
-        return 1, self.solver.dr / (1 - 2 / self.rem), self.rem**2 * self.solver.dtheta, \
-               self.solver.dphi * self.rem**2 * np.sin(self.tem)**2
+        a = self.solver.bha
+        delta = self.rem ** 2 - 2 * self.rem + a ** 2
+        sigma = self.rem ** 2 + a ** 2 * np.cos(self.tem) ** 2
+
+        pt = - (1 - 2 * self.rem / sigma) * self.solver.dt - \
+             4 * self.rem * a * np.sin(self.tem) ** 2 / sigma * self.solver.dphi
+        pr = sigma / delta * self.solver.dr
+        pth = sigma * self.solver.dtheta
+        pphi = (self.rem ** 2 * a ** 2 + 2 * self.rem * a ** 2 / sigma) * np.sin(self.tem) ** 2 * self.solver.dphi - \
+             4 * self.rem * a * np.sin(self.tem) ** 2 / sigma * self.solver.dt
+
+        return pt, pr, pth, pphi
+
 
     def calculate_initial_momenta_ZAMO(self):
-        pt, pr, ptheta, pphi = self.calculate_initial_momenta_general()
-        al = 1 - 2 / self.rem
+        a = self.solver.bha
+        delta = self.rem ** 2 - 2 * self.rem + a ** 2
+        A = (self.rem ** 2 + a ** 2) ** 2 - delta * a ** 2 * np.sin(self.tem)
+        sigma = self.rem ** 2 + a ** 2 * np.cos(self.tem) ** 2
 
-        return pt / np.sqrt(al), pr * np.sqrt(al), ptheta / self.rem, pphi / (self.rem * np.sin(self.tem))
+        e_nu = np.sqrt(A / (sigma * delta))
+        e_psi = np.sqrt(sigma / (A * np.sin(self.tem) ** 2))
+        e_mu1 = np.sqrt(delta / sigma)
+        e_mu2 = np.sqrt(1 / sigma)
+        omega = 2 * a * self.rem / A
+
+        pt, pr, pth, pphi = self.calculate_initial_momenta_general()
+
+        return e_nu * pt + omega * e_nu * pphi, e_mu1 * pr, e_mu2 * pth, e_psi * pphi
 
     def _solve(self):
         return self.solver.solve()
