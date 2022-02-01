@@ -56,7 +56,7 @@ class OneRaySolver:
         else:
             raise ValueError(f'Saver type {saver} is not supported.')
         self.orb = OrbitVelocityKerr(self.s, self.bha, self.rem)
-        self.rel = RelativeVelocitySchwarzschild(self.s, self.rem)
+        self.rel = RelativeVelocityKerr(self.s, self.bha, self.rem)
 
         self.lamda = None
         self.qu = None
