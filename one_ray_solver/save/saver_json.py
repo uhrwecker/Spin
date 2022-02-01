@@ -19,9 +19,10 @@ class DataSaverJson(saver_abc.DataSaverABC):
         self.config['OBSERVER']['alpha'] = alpha
         self.config['OBSERVER']['beta'] = beta
 
-    def add_emitter_info(self, s, geometry, theta, phi, shape):
+    def add_emitter_info(self, s, a, geometry, theta, phi, shape):
         self.config['EMITTER']['shape'] = shape
         self.config['EMITTER']['s'] = s
+        self.config['EMITTER']['bh_a'] = a
         if shape == 'sphere':
             self.config['EMITTER']['rho'] = geometry[0]
         elif shape == 'ellipsoid':

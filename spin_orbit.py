@@ -73,7 +73,7 @@ def main():
         for n, phi in enumerate(phis):
             data = np.loadtxt(args.save_range+'2', delimiter=';')
             guess = (np.mean(data[n][3:5]), np.mean(data[n][5:]))
-            rhh = RayHandler(s=geo['s'], geometry=geometry,
+            rhh = RayHandler(s=geo['s'], bha=geo['a'], geometry=geometry,
                             rem=em['r_em'], tem=em['theta_em'], pem=phi,
                             robs=obs['r_obs'], tobs=obs['theta_obs'], pobs=obs['phi_obs'],
                             **screen, m=1, **num, fp=save_fp, saver='json', shape=geo['shape'],
@@ -112,7 +112,7 @@ def main():
     else:
         raise ValueError
 
-    rh = RayHandler(s=geo['s'], geometry=geometry,
+    rh = RayHandler(s=geo['s'], bha=geo['a'], geometry=geometry,
                     rem=em['r_em'], tem=em['theta_em'], pem=em['phi_em'],
                     robs=obs['r_obs'], tobs=obs['theta_obs'], pobs=obs['phi_obs'],
                     **screen, m=1, **num, fp=save_fp, saver='json', shape=geo['shape'],

@@ -4,7 +4,7 @@ import contextlib
 import os
 import sys
 
-from one_ray_solver.ode import schwarzschild
+from one_ray_solver.ode import kerr
 
 
 def fileno(file_or_fd):
@@ -40,11 +40,12 @@ def stdout_redirected(to=os.devnull, stdout=None):
             os.dup2(copied.fileno(), stdout_fd)  # $ exec >&copied
 
 
-class ODESolverSchwazrschild:
-    """Base class for solving the Schwarzschild field euqations!"""
-    def __init__(self, robs, tobs, pobs, l, q, m=1, start=0, stop=70, num=100000, abserr=1e-7, relerr=1e-7,
+class ODESolverKerr:
+    """Base class for solving the Kerr field euqations!"""
+    def __init__(self, robs, tobs, pobs, l, q, m=1, bha=0., start=0, stop=70, num=100000, abserr=1e-7, relerr=1e-7,
                  sign_r=-1, sign_q=1, sign_l=1):
         self.m = m
+        self.bha = bha
 
         self.t0 = 0
         self.robs = robs
@@ -76,7 +77,7 @@ class ODESolverSchwazrschild:
         psi = np.array([self.t0, self.dt, self.robs, self.dr, self.tobs, self.dtheta, self.pobs, self.dphi])
 
         with stdout_redirected():
-            result = odeint(schwarzschild.geod, psi, self.sigma, args=(self.m, ), atol=self.abserr, rtol=self.relerr)
+            result = odeint(schwarzschild.geod, psi, self.sigma, args=(self.m, self.bha), atol=self.abserr, rtol=self.relerr)
 
         return self.sigma, result
 

@@ -12,12 +12,13 @@ from one_ray_solver.velocities import *
 
 
 class OneRaySolver:
-    def __init__(self, s=0., rem=8., tem=np.pi/2, pem=0., geometry=(0.5,), robs=35., tobs=1., pobs=0.,
+    def __init__(self, s=0., bha=0., rem=8., tem=np.pi/2, pem=0., geometry=(0.5,), robs=35., tobs=1., pobs=0.,
                  alpha=0., beta=-5., m=1, start=0, stop=70, num=100000, abserr=1e-7, relerr=1e-7, interp_num=10000,
                  sign_r=-1, sign_theta=1, sign_phi=1, fp='./', saver='json', shape='sphere',
                  save_even_when_not_colliding=True, save_handle=None,
                  save_csv=False, save_data=True):
         self.s = s
+        self.bha = bha
 
         self.rem = rem
         self.tem = tem
@@ -54,7 +55,7 @@ class OneRaySolver:
             self.saver = saver_cfg.DataSaverConfig(fp)
         else:
             raise ValueError(f'Saver type {saver} is not supported.')
-        self.orb = OrbitVelocitySchwarzschild(self.s, self.rem)
+        self.orb = OrbitVelocityKerr(self.s, self.bha, self.rem)
         self.rel = RelativeVelocitySchwarzschild(self.s, self.rem)
 
         self.lamda = None
@@ -72,7 +73,7 @@ class OneRaySolver:
                                                                             self.robs, self.tobs, self.m)
 
         # step 2: setup the solver itself
-        sol = solver.ODESolverSchwazrschild(self.robs, self.tobs, self.pobs, self.lamda, self.qu, self.m,
+        sol = solver.ODESolverKerr(self.robs, self.tobs, self.pobs, self.lamda, self.qu, self.m, self.bha,
                                             self.start, self.stop, self.ray_num, self.abserr, self.relerr,
                                             self.sign_r, self.sign_theta, self.sign_phi)
 
@@ -118,7 +119,7 @@ class OneRaySolver:
 
             # step 6: save!
             self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
-            self.saver.add_emitter_info(self.s, self.geometry, *local_coord, self.shape)
+            self.saver.add_emitter_info(self.s, self.bha, self.geometry, *local_coord, self.shape)
             self.saver.add_constants_of_motion(self.lamda, self.qu, g)
             self.saver.add_initial_data_info(0, *collision_point, dt, dr, dtheta, dphi)
             self.saver.add_momenta_info(pt, pr, ptheta, pphi, p0, p1, p2, p3)
