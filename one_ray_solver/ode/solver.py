@@ -82,13 +82,21 @@ class ODESolverKerr:
         return self.sigma, result
 
     def get_ic_from_com(self, l, q, sign_r=-1, sign_l=1, sign_q=1):
-        dt = 1 / (1 - 2 * self.m / self.robs)
+        delta = self.robs ** 2 - 2 * self.robs + self.bha ** 2
+        sigma = self.robs ** 2 + self.bha ** 2 * np.cos(self.tobs) ** 2
+        T_func = self.robs ** 2 + self.bha ** 2 - l * self.bha
+        R_func = self.robs ** 4 - (q + l ** 2 - self.bha ** 2) ** self.robs ** 2 + \
+                 2 * (q + (l - self.bha) ** 2) * self.robs - self.bha ** 2 * q
+        Th_func = q + self.bha ** 2 * np.cos(self.tobs) ** 2 - l ** 2 / np.tan(self.tobs) ** 2
 
-        dtheta = sign_q * np.sqrt(np.abs(q - l**2 / np.tan(self.tobs)**2)) / self.robs**2
+        dt = 1 / sigma * (- self.bha * (self.bha * np.sin(self.tobs) ** 2 - l) +
+                          (self.robs ** 2 + self.bha ** 2) * T_func / delta)
 
-        dr = sign_r * np.sqrt(1 - (q + l**2) / self.robs**2 * (1 - 2 * self.m / self.robs))
+        dtheta = sign_q / sigma * np.sqrt(Th_func)
 
-        dphi = sign_l * l / (self.robs * np.sin(self.tobs))**2
+        dr = sign_r / sigma * np.sqrt(R_func)
+
+        dphi = sign_l / sigma * (- self.bha + l / np.sin(self.tobs) ** 2 + self.bha * T_func / delta)
 
         return dt, dr, dtheta, dphi
 
