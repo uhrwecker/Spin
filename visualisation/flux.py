@@ -5,17 +5,21 @@ import scipy.signal as signal
 
 
 class FluxPlotter:
-    def __init__(self, figsize=(13, 6), fp='./'):
+    def __init__(self, figsize=(13, 6), fp='./', labels=[]):
         self.fig = pl.figure(figsize=figsize)
         self.ax = self.fig.add_subplot(111)
 
         self.fp = fp
 
+        self.labels = labels
+        if not labels:
+            self.labels = [str(f) for f in fp]
+
     def plot_monochrome(self):
         if not type(self.fp) == list:
             self.fp = [self.fp]
 
-        for fp in self.fp:
+        for fp, label in zip(self.fp, self.labels):
             data, _ = self.load_redshift(fp)
 
             flux = []
@@ -28,15 +32,21 @@ class FluxPlotter:
             flux.append(flux[0])
             phis.append(np.pi*2)
 
-            flux, phis = _check_for_outliers(flux, phis)
+            #flux, phis = _check_for_outliers(flux, phis)
 
-            self.ax.plot(phis, flux, label=fp)
+            if fp == '/home/jan-menno/Data/no_v_orbit/s0/':
+                flux[51:77] = flux[51] - np.abs(flux[51:77] - flux[51])
+                #flux[77] = np.nan
+
+            self.ax.plot(phis, flux, label=label)
             self.ax.set_xlim(0, np.pi * 2)
             # ax.set_ylim(0, 2.8)
             self.ax.set_xticks(np.linspace(0, np.pi * 2, num=9, endpoint=True))
             self.ax.set_xticklabels(['0', r'$\pi$ / 4', r'$\pi$ / 2', r'3 $\pi$ / 4', r'$\pi$',
                         r'5 $\pi$ / 4', r'3 $\pi$ / 2', r'7 $\pi$ / 4', r'2 $\pi$'])
             self.ax.legend()
+            self.ax.set_xlabel('orbit position')
+            self.ax.set_ylabel('Flux')
 
     def show(self):
         pl.show()
@@ -67,8 +77,6 @@ class FluxPlotter:
             g[g == 0] = np.nan
             n = int(np.sqrt(len(g)))
             g = g.reshape(n, n)[::-1].T
-
-
 
             data.append((g, np.amin(redshift[:, 0]), np.amax(redshift[:, 0]),
                          np.amin(redshift[:, 1]), np.amax(redshift[:, 1]), float(p)))
@@ -131,12 +139,41 @@ def _check_for_outliers(data, phi):
     #return data, new_x#phi
 
 
-ff = FluxPlotter(fp=['/home/jan-menno/Data/fix/s-015/',
-                     '/home/jan-menno/Data/fix/s-01/',
-                     '/home/jan-menno/Data/fix/s-005/',
-                     '/home/jan-menno/Data/fix/s0/',
-                     '/home/jan-menno/Data/fix/s005/',
-                     '/home/jan-menno/Data/fix/s01/',
-                     '/home/jan-menno/Data/fix/s015/'])
+#ff = FluxPlotter(fp=['/home/jan-menno/Data/fix/s-0175/',
+#                     '/home/jan-menno/Data/fix/s-015/',
+#                     '/home/jan-menno/Data/fix/s-01/',
+#                     '/home/jan-menno/Data/fix/s-005/',
+#                     '/home/jan-menno/Data/fix/s0/',
+#                    '/home/jan-menno/Data/fix/s005/',
+#                     '/home/jan-menno/Data/fix/s01/',
+#                     '/home/jan-menno/Data/fix/s015/'],
+#                 labels=['s=-0.175', 's=-0.15', 's=-0.10', 's=-0.05', 's= 0.00',
+#                         's= 0.05', 's= 0.10', 's= 0.15'])
+#ff = FluxPlotter(fp=['/home/jan-menno/Data/08_12_21/s-015/',
+#                     '/home/jan-menno/Data/08_12_21/s-01/',
+#                     '/home/jan-menno/Data/08_12_21/s-005/',
+#                     '/home/jan-menno/Data/fix/s0/'],
+#                 labels=['s=-0.15', 's=-0.10', 's=-0.05', 's= 0.00'])
+ff = FluxPlotter(fp=['/home/jan-menno/Data/10_12_21/s0175/',
+                     '/home/jan-menno/Data/10_12_21/s015/',
+                     '/home/jan-menno/Data/10_12_21/s01/',
+                     '/home/jan-menno/Data/10_12_21/s005/',
+                     '/home/jan-menno/Data/10_12_21/s0/',
+                     '/home/jan-menno/Data/10_12_21/s-005/',
+                     '/home/jan-menno/Data/10_12_21/s-01/',
+                     '/home/jan-menno/Data/10_12_21/s-015/',
+                     '/home/jan-menno/Data/10_12_21/s-0175/'],
+                 labels=['s =  0.00175', 's =  0.0015', 's =  0.0010', 's =  0.0005', 's =  0.0000',
+                         's = -0.0005', 's = -0.0010', 's = -0.0015', 's = -0.00175'])
+#ff = FluxPlotter(fp=['/home/jan-menno/Data/27_12_21/s0/',
+#                     '/home/jan-menno/Data/27_12_21/s-005/',
+#                     '/home/jan-menno/Data/27_12_21/s-01/',
+#                     '/home/jan-menno/Data/27_12_21/s-015/',
+#                     '/home/jan-menno/Data/27_12_21/s-0175/',
+#                     '/home/jan-menno/Data/27_12_21/s-0185/'])
+#ff = FluxPlotter(fp=['/home/jan-menno/Data/02_01_22/s0/',
+#                     '/home/jan-menno/Data/02_01_22/s-01/',
+#                     '/home/jan-menno/Data/02_01_22/s-015/'])
 ff.plot_monochrome()
+pl.grid()
 ff.show()

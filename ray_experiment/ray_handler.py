@@ -95,10 +95,8 @@ class RayHandler:
 
         # main loop; for every alpha / beta pair, run the ray solver
         # first, multiprocessing pool for cpu count - 1, because we might want to hear music idk
-        pool = pt.pools.ProcessPool(mp.cpu_count()-1)#mp.Pool(mp.cpu_count()-1)
+        pool = pt.pools.ProcessPool(mp.cpu_count()-1)
         for result in tqdm(pool.uimap(self.multiprocess_step, alpha_beta_matrix), total=len(alpha_beta_matrix)):
-        #for item in alpha_beta_matrix:
-        #    result = self.multiprocess_step(item)
             # append the results
             data_form.append(list(result[0:3]))
             number_of_collisions += result[3]

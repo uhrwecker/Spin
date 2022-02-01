@@ -105,7 +105,6 @@ def main():
                            save_csv=False, save_data=False)
         ors.set_alpha_beta(alpha, beta)
         ray, cfg = ors.solve(full_output=True)
-        print(cfg)
 
         p = Simple3DPlotter([obs['r_obs'], obs['theta_obs'], obs['phi_obs']],
                             [em['r_em'], em['theta_em'], em['phi_em']])

@@ -3,6 +3,7 @@ import time
 import argparse
 
 from ray_experiment.ray_handler import RayHandler
+from ray_experiment.ranger import RangeAdjustment
 from ray_experiment.orbit_handler import OrbitHandler
 from one_ray_solver.utility.maclaurin import calculate_polar_semi_axis
 from repair import fix
@@ -15,7 +16,7 @@ def get_parser():
                         help='Specify the location of the config file.', dest='fp', default='./doc/demo_input.json')
     parser.add_argument('-s', '--save', action='store', type=str, help='Specify the saving directory.', dest='save',
                         default='')
-    parser.add_argument('-n', '--number-of-phi', action='store', type=int, default=0, dest='number',
+    parser.add_argument('-n', '--number-of-phi', action='store', type=int, default=2, dest='number',
                         help='Number of emitter positions (phi_em).')
     parser.add_argument('-k', '--range', action='store_true', dest='adjust_range', default=False,
                         help='Run the automatic range finder to find the range of (alpha, beta) for the emitter.')
@@ -58,7 +59,52 @@ def main():
         save_fp = args.save
 
     if geo['shape'] == 'sphere':
-        geometry = (geo['rho'],)
+        geometry = [geo['rho'],]
+    elif geo['shape'] == 'ellipsoid':
+        geometry = [geo['a']]
+        c = calculate_polar_semi_axis(geo['s'], geo['a'])
+        geometry.append(c[0])
+    else:
+        raise ValueError
+
+    if args.adjust_range:
+        import numpy as np
+        phis = np.linspace(0, 2*np.pi, num=args.number)
+        for n, phi in enumerate(phis):
+            data = np.loadtxt(args.save_range+'2', delimiter=';')
+            guess = (np.mean(data[n][3:5]), np.mean(data[n][5:]))
+            rhh = RayHandler(s=geo['s'], geometry=geometry,
+                            rem=em['r_em'], tem=em['theta_em'], pem=phi,
+                            robs=obs['r_obs'], tobs=obs['theta_obs'], pobs=obs['phi_obs'],
+                            **screen, m=1, **num, fp=save_fp, saver='json', shape=geo['shape'],
+                            save_even_when_not_colliding=args.save_even_when_not_colliding, save_handle=None,
+                            save_csv=args.save_csv, save_redshift=args.save_redshift,
+                            save_config=~args.dont_save_exp_config, save_data=args.save)
+
+            rg = RangeAdjustment(rhh)
+            rhh = rg.start(fp=args.save_range, guess=guess)
+
+            rhh.resolution = screen['resolution']
+            rhh.save_even_when_not_colliding = args.save_even_when_not_colliding
+            rhh.save_csv = args.save_csv
+            rhh.save_redshift = args.save_redshift
+            rhh.save_config = ~args.dont_save_exp_config
+            rhh.save_data = args.save
+
+            if geo['shape'] == 'sphere':
+                geometry = [geo['rho'], ]
+            elif geo['shape'] == 'ellipsoid':
+                geometry = [geo['a']]
+                c = calculate_polar_semi_axis(geo['s'], geo['a'])
+                geometry.append(c[0])
+            else:
+                raise ValueError
+
+        del rhh
+
+    # better save than sorry:
+    if geo['shape'] == 'sphere':
+        geometry = [geo['rho'], ]
     elif geo['shape'] == 'ellipsoid':
         geometry = [geo['a']]
         c = calculate_polar_semi_axis(geo['s'], geo['a'])

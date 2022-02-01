@@ -12,35 +12,50 @@ class RangeAdjustment:
         self.ray.save_redshift = False
         self.ray.save_data = False
 
-        self.rho = self.ray.rho
+        self.rho = self.ray.geometry[0]
         if self.rho > 1:
             raise ValueError('This Range finder can only handle for radii rho < 1.')
 
-        self.width = 15
+        self.width = 10
         self.resolution = 15
 
         self.alpha_centre = 0
         self.beta_centre = 0
 
     def start(self, guess=(0, 0), fp=''):
+        self.guess = guess
         self.alpha_centre, self.beta_centre = guess
 
-        initial_hit = False
+        self.ray.geometry[0] = 2
 
-        self.ray.rho = 2
+        while not self.ray.geometry[0] <= 2*self.rho:
 
-        while not initial_hit:
-            initial_hit = self.check_hits()
+            initial_hit = False
 
-        halve_rho_hit = False
+            while not initial_hit:
+                initial_hit = self.check_hits()
 
-        self.ray.rho /= 2
-        self.resolution = 15
+            self.resolution = 20
 
-        while not halve_rho_hit:
-            halve_rho_hit = self.check_hits()
+            self.ray.geometry[0] /= 2
 
-        self.ray.rho = self.rho
+       # halve_rho_hit = False#
+
+        #self.ray.geometry[0] /= 2
+        #self.resolution = 15
+
+        #while not halve_rho_hit:
+        #    halve_rho_hit = self.check_hits()
+
+        #halve_rho_hit = False
+
+        #self.ray.geometry[0] /= 2
+        #self.resolution = 25
+
+        #while not halve_rho_hit:
+        #    halve_rho_hit = self.check_hits()
+
+        #self.ray.geometry[0] = self.rho
 
         best_rho = False
         while not best_rho:
@@ -48,7 +63,7 @@ class RangeAdjustment:
 
         print('Range found! Check if it is ok ...')
         self.width *= 1.25  # plus 25 percent
-        self.width += 0.25  # plus at least 0.25
+        #self.width += 0.25  # plus at least 0.25
         self.resolution = 10
         self.ray.change_ranges(self.alpha_centre - self.width, self.alpha_centre + self.width,
                                self.beta_centre - self.width, self.beta_centre + self.width, self.resolution)
@@ -67,11 +82,19 @@ class RangeAdjustment:
     def check_hits(self):
         hit = False
 
+        if self.resolution >= 100:
+            print('Resolution too high; somethings not working.')
+            self.resolution = 25
+            self.alpha_centre, self.beta_centre = self.guess
+            self.width = 3
+            self.ray.geometry[0] = 2.5
+
         print(f'Searching for an hit with resolution of {self.resolution} around \n '
               f'alpha = {self.alpha_centre} and beta = {self.beta_centre} ...')
         self.ray.change_ranges(self.alpha_centre - self.width, self.alpha_centre + self.width,
                                self.beta_centre - self.width, self.beta_centre + self.width, self.resolution)
 
+        print(self.alpha_centre, self.width)
         info, number_of_collisions, hit_data = self.ray.run()
 
         if number_of_collisions > 0:
@@ -81,10 +104,7 @@ class RangeAdjustment:
             hit = True
         else:
             self.resolution += 5
-            print('- Could not find the target, increasing resolution...')
-
-        if self.resolution > 20:
-            raise ValueError('Resolution too high; somethings not working.')
+            print(f'- Could not find the target, increasing resolution... (at phi = {self.ray.pem})')
 
         return hit
 
@@ -113,5 +133,8 @@ class RangeAdjustment:
 
         alpha_centre = np.median(hit_data[:, 0])
         beta_centre = np.median(hit_data[:, 1])
+
+        if np.amax([alpha_width, beta_width]) == 0.:
+            alpha_width = self.width / 2
 
         return np.amax([alpha_width, beta_width]), alpha_centre, beta_centre
