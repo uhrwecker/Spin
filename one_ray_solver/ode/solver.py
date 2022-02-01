@@ -77,7 +77,7 @@ class ODESolverKerr:
         psi = np.array([self.t0, self.dt, self.robs, self.dr, self.tobs, self.dtheta, self.pobs, self.dphi])
 
         with stdout_redirected():
-            result = odeint(schwarzschild.geod, psi, self.sigma, args=(self.m, self.bha), atol=self.abserr, rtol=self.relerr)
+            result = odeint(kerr.geod, psi, self.sigma, args=(self.m, self.bha), atol=self.abserr, rtol=self.relerr)
 
         return self.sigma, result
 
