@@ -70,7 +70,7 @@ class OneRaySolver:
         start_time = time.time()
         # step 1: get the constants of motion
         self.lamda, self.qu = screen_COM_converter.lamda_qu_from_alpha_beta(self.alpha, self.beta,
-                                                                            self.robs, self.tobs, self.m)
+                                                                            self.robs, self.tobs, self.m, self.bha)
 
         # step 2: setup the solver itself
         sol = solver.ODESolverKerr(self.robs, self.tobs, self.pobs, self.lamda, self.qu, self.m, self.bha,

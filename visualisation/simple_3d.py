@@ -4,9 +4,11 @@ import numpy as np
 
 class Simple3DPlotter:
     def __init__(self, observer_position, emitter_position, figsize=(10, 10), dpi=10, save=None,
-                 central_object='schwarzschild'):
+                 central_object='schwarzschild', bha=0.):
         self.observer_position = observer_position
         self.emitter_position = emitter_position
+
+        self.bha = bha
 
         self.dpi = dpi
         self.save = save
@@ -88,7 +90,8 @@ class Simple3DPlotter:
                              starting_from='emitter'):
         from one_ray_solver.utility import screen_COM_converter
         lamda, qu = screen_COM_converter.lamda_qu_from_alpha_beta(alpha, beta,
-                                                                  self.observer_position[0], self.observer_position[1])
+                                                                  self.observer_position[0], self.observer_position[1],
+                                                                  a=self.bha)
 
         self.plot_from_constants_of_motion(solver, lamda, qu, sign_r, sign_theta, sign_phi, starting_from)
 

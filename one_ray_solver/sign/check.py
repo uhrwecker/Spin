@@ -67,7 +67,6 @@ class SignImpactSchwarzschild:
 
         return pt, pr, pth, pphi
 
-
     def calculate_initial_momenta_ZAMO(self):
         a = self.solver.bha
         delta = self.rem ** 2 - 2 * self.rem + a ** 2
