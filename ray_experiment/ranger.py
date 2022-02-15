@@ -39,31 +39,12 @@ class RangeAdjustment:
 
             self.ray.geometry[0] /= 2
 
-       # halve_rho_hit = False#
-
-        #self.ray.geometry[0] /= 2
-        #self.resolution = 15
-
-        #while not halve_rho_hit:
-        #    halve_rho_hit = self.check_hits()
-
-        #halve_rho_hit = False
-
-        #self.ray.geometry[0] /= 2
-        #self.resolution = 25
-
-        #while not halve_rho_hit:
-        #    halve_rho_hit = self.check_hits()
-
-        #self.ray.geometry[0] = self.rho
-
         best_rho = False
         while not best_rho:
             best_rho = self.check_hits()
 
         print('Range found! Check if it is ok ...')
         self.width *= 1.25  # plus 25 percent
-        #self.width += 0.25  # plus at least 0.25
         self.resolution = 10
         self.ray.change_ranges(self.alpha_centre - self.width, self.alpha_centre + self.width,
                                self.beta_centre - self.width, self.beta_centre + self.width, self.resolution)
