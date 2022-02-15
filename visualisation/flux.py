@@ -154,15 +154,15 @@ def _check_for_outliers(data, phi):
 #                     '/home/jan-menno/Data/08_12_21/s-005/',
 #                     '/home/jan-menno/Data/fix/s0/'],
 #                 labels=['s=-0.15', 's=-0.10', 's=-0.05', 's= 0.00'])
-ff = FluxPlotter(fp=['/home/jan-menno/Data/10_12_21/s0175/',
-                     '/home/jan-menno/Data/10_12_21/s015/',
-                     '/home/jan-menno/Data/10_12_21/s01/',
-                     '/home/jan-menno/Data/10_12_21/s005/',
-                     '/home/jan-menno/Data/10_12_21/s0/',
-                     '/home/jan-menno/Data/10_12_21/s-005/',
-                     '/home/jan-menno/Data/10_12_21/s-01/',
-                     '/home/jan-menno/Data/10_12_21/s-015/',
-                     '/home/jan-menno/Data/10_12_21/s-0175/'],
+ff = FluxPlotter(fp=['/media/jan-menno/T7/Schwarzschild/maclaurin/s0175/',
+                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s015/',
+                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s01/',
+                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s005/',
+                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s0/',
+                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s-005/',
+                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s-01/',
+                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s-015/',
+                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s-0175/'],
                  labels=['s =  0.00175', 's =  0.0015', 's =  0.0010', 's =  0.0005', 's =  0.0000',
                          's = -0.0005', 's = -0.0010', 's = -0.0015', 's = -0.00175'])
 #ff = FluxPlotter(fp=['/home/jan-menno/Data/27_12_21/s0/',
@@ -176,4 +176,5 @@ ff = FluxPlotter(fp=['/home/jan-menno/Data/10_12_21/s0175/',
 #                     '/home/jan-menno/Data/02_01_22/s-015/'])
 ff.plot_monochrome()
 pl.grid()
+pl.ylim(0, 0.021)
 ff.show()

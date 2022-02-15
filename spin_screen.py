@@ -67,7 +67,7 @@ def main():
         raise ValueError
 
     if not args.debug:
-        rh = ray_handler.RayHandler(s=geo['s'], bha=geo['a'], geometry=geometry,
+        rh = ray_handler.RayHandler(s=geo['s'], bha=geo['bh_a'], geometry=geometry,
                                     rem=em['r_em'], tem=em['theta_em'], pem=em['phi_em'],
                                     robs=obs['r_obs'], tobs=obs['theta_obs'], pobs=obs['phi_obs'],
                                     **screen, m=1, **num, fp=save_fp, saver='json', shape=geo['shape'],
