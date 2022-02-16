@@ -47,7 +47,16 @@ class OrbitHandler:
     def run_from_meta_data(self):
         data = np.loadtxt(self.meta_data, delimiter=';', usecols=(2, 3, 4, 5, 6))
 
+        if type(data[0]) == np.float64:
+            data = [[data[0], data[1], data[2], data[3], data[4]],
+                    [None, None, None, None, None]]
+
         for row in data:
+            # if there is only one item:
+            if data[0][0] == None:
+                print(data[0][0])
+                continue
+
             pem, amin, amax, bmin, bmax = row
             print(f'\nNow at phi_em = {pem}')
 
