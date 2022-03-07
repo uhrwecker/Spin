@@ -96,7 +96,7 @@ class Simple3DPlotter:
         self.plot_from_constants_of_motion(solver, lamda, qu, sign_r, sign_theta, sign_phi, starting_from)
 
     def adjust(self):
-        r, t, p = self.observer_position
+        r, t, p = self.emitter_position
 
         x = r * np.cos(p) * np.sin(t)
         y = r * np.sin(p) * np.sin(t)
@@ -104,6 +104,9 @@ class Simple3DPlotter:
 
         xy = np.amax([x, y])
 
+        #self.ax.set_xlim(x-0.1, x+0.1)
+        #self.ax.set_ylim(y-0.1, y+0.1)
+        #self.ax.set_zlim(-0.1, 0.1)
         self.ax.set_xlim(-xy-1, xy+1)
         self.ax.set_ylim(-xy-1, xy+1)
         self.ax.set_zlim(-3/4*xy, 3/4*xy)

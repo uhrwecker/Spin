@@ -8,7 +8,7 @@ def alpha_beta_from_lamda_qu(lamda, qu, robs, tobs, m=1, a=0.):
     delta = robs ** 2 - 2 * robs + a ** 2
     A = (robs ** 2 + a ** 2) ** 2 - delta * a ** 2 * np.sin(tobs) ** 2
     theta = qu + a ** 2 * np.cos(tobs) ** 2 - lamda ** 2 / np.tan(tobs) ** 2
-    R = robs ** 4 - (qu + lamda ** 2  - a ** 2) * robs ** 2 + 2 * (qu + (lamda - a) ** 2) * robs - a ** 2 * qu
+    R = robs ** 4 - (qu + lamda ** 2 - a ** 2) * robs ** 2 + 2 * (qu + (lamda - a) ** 2) * robs - a ** 2 * qu
 
     alpha = robs * lamda * sigma * np.sqrt(delta) / (np.sqrt(R * A) * np.sin(tobs))
     beta = - robs * np.sqrt(theta * delta / R)

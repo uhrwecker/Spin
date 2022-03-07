@@ -78,7 +78,7 @@ class OneRaySolver:
                                             self.sign_r, self.sign_theta, self.sign_phi)
 
         sigma, ray = sol.solve()
-
+        return ray, None
         # step 3: see if there is a collision
         collision_point, local_coord, collision_flag = self.collider.check(ray)
 
