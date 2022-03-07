@@ -115,7 +115,12 @@ class OneRaySolver:
             g = redshift.g(p0, p1, p3, orbit_velocity, gamma_orb, relative_vel, gamma_rel_vel,
                            surf_vel_u1, surf_vel_u3, gamma_surf)
 
-            g = 1 / np.sqrt(1 - 2 / self.robs) * 1 / g # TODO change E_obs
+            # step 6.1: calculate the p0 component of the observer
+            delta = self.robs ** 2 - 2 * self.robs + self.bha ** 2
+            A = (self.robs ** 2 + self.bha ** 2) ** 2 - delta * self.bha * np.sin(self.tobs) ** 2
+            omega = 2 * self.bha * self.robs / A
+            e_min_nu = np.sqrt(A / ((self.robs ** 2 + self.bha ** 2 * np.cos(self.tobs) ** 2) * delta))
+            g = - e_min_nu * (1 - self.lamda * omega) / g
 
             # step 6: save!
             self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
