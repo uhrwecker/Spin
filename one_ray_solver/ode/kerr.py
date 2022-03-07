@@ -101,7 +101,7 @@ def ddth_gtt(a, r, th):
 
 
 def ddth_grr(a, r, th):
-    return - 2 * a ** 2 * np.sin(th) * np.cos(th) / (r**2 - 2 * r + a **2)
+    return - 2 * a ** 2 * np.sin(th) * np.cos(th) / (r**2 - 2 * r + a ** 2)
 
 
 def ddth_gthth(a, r, th):
@@ -114,14 +114,14 @@ def ddth_gtph(a, r, th):
 
 def ddth_gphph(a, r, th):
     return 2 * np.cos(th) * np.sin(th) * (r ** 2 + a ** 2 + 2 * r * a ** 2 * (r**2 + a ** 2) /
-                                          (r ** 2 + a ** 2 * np.cos(th) ** 2)) ** 2
+                                          (r ** 2 + a ** 2 * np.cos(th) ** 2) ** 2)
 
 
 # derivatives r:
 
 
 def ddr_gtt(a, r, th):
-    return - 2 * (r - a ** 2 * np.cos(th) ** 2) / (r ** 2 + a ** 2 * np.cos(th) ** 2)
+    return - 2 * (r - a ** 2 * np.cos(th) ** 2) / (r ** 2 + a ** 2 * np.cos(th) ** 2) ** 2
 
 
 def ddr_gtph(a, r, th):
@@ -133,7 +133,7 @@ def ddr_gphph(a, r, th):
 
 
 def ddr_grr(a, r, th):
-    return - (2 * r ** 2 - a ** 2 * (1 - 2 * np.cos(th) ** 2 * (r - 1))) / (r ** 2 + a ** 2 * np.cos(th) ** 2) ** 2
+    return - (2 * r ** 2 - a ** 2 * (1 - 2 * np.cos(th) ** 2 * (r - 1))) / (r ** 2 - 2 * r + a ** 2) ** 2
 
 
 def ddr_gthth(a, r, th):
