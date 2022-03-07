@@ -78,7 +78,7 @@ class OneRaySolver:
                                             self.sign_r, self.sign_theta, self.sign_phi)
 
         sigma, ray = sol.solve()
-        #return ray, None
+
         # step 3: see if there is a collision
         collision_point, local_coord, collision_flag = self.collider.check(ray)
 
@@ -91,7 +91,6 @@ class OneRaySolver:
             # step 4: check the signs of initial velocities at impact
             self.checker = check.SignImpactSchwarzschild(sol, collision_point, [self.robs, self.tobs, self.pobs])
             if self.checker.problem:
-                print('HUH')
                 return self._no_collision()
 
             sigma, ray = self.checker._solve()
@@ -116,7 +115,7 @@ class OneRaySolver:
             g = redshift.g(p0, p1, p3, orbit_velocity, gamma_orb, relative_vel, gamma_rel_vel,
                            surf_vel_u1, surf_vel_u3, gamma_surf)
 
-            g = -1 / np.sqrt(1 - 2 / self.robs) * 1 / g # TODO change E_obs
+            g = 1 / np.sqrt(1 - 2 / self.robs) * 1 / g # TODO change E_obs
 
             # step 6: save!
             self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
