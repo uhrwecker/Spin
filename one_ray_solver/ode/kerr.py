@@ -56,7 +56,8 @@ def thdd(a, r, th, td, rd, thd, phid):
           thd ** 2 * ddth_gthth(a, r, th) - \
           2 * thd * ddtau_thth(a, r, th, thd, rd)
 
-    return sum / (2 * gthth(a, r, th))
+    #return sum / (2 * gthth(a, r, th))
+    return -2 / r * rd * thd + np.cos(th) * np.sin(th) * phid ** 2
 
 
 def phidd(a, r, th, td, rd, thd, phid):
@@ -68,7 +69,6 @@ def phidd(a, r, th, td, rd, thd, phid):
     sum2 = td * ddtau_tph(a, r, th, thd, rd) + phid * ddtau_phph(a, r, th, thd, rd)
 
     return factor * (sum1 + sum2)
-
 
 # metric elements:
 
