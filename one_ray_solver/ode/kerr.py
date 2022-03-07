@@ -45,11 +45,7 @@ def rdd(a, r, th, td, rd, thd, phid):
           thd ** 2 * ddr_gthth(a, r, th) - \
           2 * rd * ddtau_rr(a, r, th, thd, rd)
 
-    #return sum / (2 * grr(a, r, th))
-    alpha = 1 - 2 / r
-    m = 1
-    return -m * td ** 2 / r ** 2 * alpha + m / r ** 2 * rd ** 2 / alpha + r * alpha * thd ** 2 + alpha * r * np.sin(
-             th) ** 2 * phid**2
+    return sum / (2 * grr(a, r, th))
 
 
 def thdd(a, r, th, td, rd, thd, phid):
@@ -165,8 +161,3 @@ def ddtau_rr(a, r, th, dth, dr):
 
 def ddtau_thth(a, r, th, dth, dr):
     return 2 * r * dr - 2 * a ** 2 * np.sin(th) * np.cos(th) * dth
-
-
-
-td, rd, thd, phid = 1.0606060606060606, -0.9886863244440961, 0.0044136105761544316, 0.0
-print(tdd(0., 35., 1.0, td, rd, thd, phid))

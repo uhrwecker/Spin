@@ -17,7 +17,7 @@ def collision_with_object(r, t, p, position, geometry):
     Z = r0 * np.cos(t0)
 
     dist = np.sqrt((x - X) ** 2 + (y - Y) ** 2 + (z - Z) ** 2)
-    print(np.amin(dist))
+    #print(np.amin(dist))
     if np.amin(dist) < rho:
         idx = np.where(dist < rho)[0][0]
         return r[idx], t[idx], p[idx]

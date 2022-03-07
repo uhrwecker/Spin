@@ -102,7 +102,6 @@ class SignImpactSchwarzschild:
         Z = r0 * np.cos(t0)
 
         dist = np.sqrt((x - X) ** 2 + (y - Y) ** 2 + (z - Z) ** 2)
-        print(np.amin(dist))
 
         if np.amin(dist) < 1e-2:
             return True, np.amin(dist)

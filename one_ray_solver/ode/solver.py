@@ -98,7 +98,6 @@ class ODESolverKerr:
 
         dphi = sign_l / sigma * (- self.bha + l / np.sin(self.tobs) ** 2 + self.bha * T_func / delta)
 
-        print(dt, dr, dtheta, dphi)
         return dt, dr, dtheta, dphi
 
     def change_emission_point(self, r, t, p, recalc=True):
