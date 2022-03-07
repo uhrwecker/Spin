@@ -160,4 +160,4 @@ def ddtau_rr(a, r, th, dth, dr):
 
 
 def ddtau_thth(a, r, th, dth, dr):
-    return ddr_gthth(a, r, th) * dr + ddth_gthth(a, r, th) * dth
+    return 2 * r * dr - 2 * a ** 2 * np.sin(th) * np.cos(th) * dth
