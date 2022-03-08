@@ -128,7 +128,7 @@ class RayHandler:
         g, time_per_step = self.step(self.solver, alpha, beta)
 
         # add to collision detector
-        if g > 0:
+        if np.abs(g) > 0:
             number_of_collisions = 1
 
         return alpha, beta, g, number_of_collisions

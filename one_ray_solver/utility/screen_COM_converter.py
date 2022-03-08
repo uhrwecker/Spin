@@ -24,7 +24,9 @@ def lamda_qu_from_alpha_beta(alpha, beta, robs, tobs, m=1, a=0.):
 
     lamda = - alpha * np.sin(tobs) / (omega * alpha * np.sin(tobs) - (sigma * np.sqrt(delta) / A) * np.sqrt(
         robs ** 2 + alpha ** 2 + beta ** 2))
-    qu = (lamda ** 2 - a ** 2) * np.cos(tobs) ** 2 + beta ** 2 * (1 - omega * lamda) ** 2 * A / (
+    qu = (lamda ** 2 / np.sin(tobs) ** 2 - a ** 2) * np.cos(tobs) ** 2 + beta ** 2 * (1 - omega * lamda) ** 2 * A / (
                 delta * (robs ** 2 + alpha ** 2 + beta ** 2))
 
     return lamda, qu
+
+print(lamda_qu_from_alpha_beta(6.455, -3.8, 35., 1.))
