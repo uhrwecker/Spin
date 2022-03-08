@@ -19,3 +19,5 @@ def lamda_qu_from_alpha_beta(alpha, beta, robs, tobs, m=1):
     qu = (beta**2 + alpha**2 * np.cos(tobs)**2) / (1 - 2/robs) * factor
 
     return lamda, qu
+
+print(lamda_qu_from_alpha_beta(6.455, -3.8, 35., 1.))
