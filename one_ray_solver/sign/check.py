@@ -57,13 +57,14 @@ class SignImpactSchwarzschild:
         a = self.solver.bha
         delta = self.rem ** 2 - 2 * self.rem + a ** 2
         sigma = self.rem ** 2 + a ** 2 * np.cos(self.tem) ** 2
+        A = (self.rem ** 2 + a ** 2) ** 2 - delta * a ** 2 * np.sin(self.tem)
 
-        pt = - (1 - 2 * self.rem / sigma) * self.solver.dt - \
+        pt = - sigma * delta / A * self.solver.dt - \
              4 * self.rem * a * np.sin(self.tem) ** 2 / sigma * self.solver.dphi
         pr = sigma / delta * self.solver.dr
         pth = sigma * self.solver.dtheta
-        pphi = (self.rem ** 2 * a ** 2 + 2 * self.rem * a ** 2 / sigma) * np.sin(self.tem) ** 2 * self.solver.dphi - \
-             4 * self.rem * a * np.sin(self.tem) ** 2 / sigma * self.solver.dt
+        pphi = A * np.sin(self.tem)**2 / sigma * self.solver.dphi - \
+             8 * self.rem ** 2 * a ** 2 * np.sin(self.tem) ** 2 / (sigma * A) * self.solver.dt
 
         return pt, pr, pth, pphi
 

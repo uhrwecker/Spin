@@ -82,7 +82,6 @@ class OneRaySolver:
         # step 3: see if there is a collision
         collision_point, local_coord, collision_flag = self.collider.check(ray)
 
-        return ray, None
         # step 3a: save the light ray that is not colliding
         if not collision_flag:
             return self._no_collision()

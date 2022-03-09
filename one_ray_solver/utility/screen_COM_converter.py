@@ -28,5 +28,3 @@ def lamda_qu_from_alpha_beta(alpha, beta, robs, tobs, m=1, a=0.):
                 delta * (robs ** 2 + alpha ** 2 + beta ** 2))
 
     return lamda, qu
-
-print(lamda_qu_from_alpha_beta(6.455, -3.8, 35., 1.))
