@@ -78,10 +78,9 @@ class OneRaySolver:
                                             self.sign_r, self.sign_theta, self.sign_phi)
 
         sigma, ray = sol.solve()
-
+        #return ray, None
         # step 3: see if there is a collision
         collision_point, local_coord, collision_flag = self.collider.check(ray)
-
         # step 3a: save the light ray that is not colliding
         if not collision_flag:
             return self._no_collision()
@@ -90,7 +89,9 @@ class OneRaySolver:
         else:
             # step 4: check the signs of initial velocities at impact
             self.checker = check.SignImpactSchwarzschild(sol, collision_point, [self.robs, self.tobs, self.pobs])
+            #print(self.alpha, self.beta, self.geometry, self.lamda, self.qu)
             if self.checker.problem:
+
                 return self._no_collision()
 
             sigma, ray = self.checker._solve()
@@ -120,7 +121,7 @@ class OneRaySolver:
             A = (self.robs ** 2 + self.bha ** 2) ** 2 - delta * self.bha * np.sin(self.tobs) ** 2
             omega = 2 * self.bha * self.robs / A
             e_min_nu = np.sqrt(A / ((self.robs ** 2 + self.bha ** 2 * np.cos(self.tobs) ** 2) * delta))
-            g = - e_min_nu * (1 - self.lamda * omega) / g
+            g = e_min_nu * (1 - self.lamda * omega) / g
 
             # step 6: save!
             self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)

@@ -28,18 +28,24 @@ def geod(w, t, m=1, a=0.):
 # second order derivatives:
 
 def tdd(a, r, th, td, rd, thd, phid):
-    factor = - gphph(a, r, th) / (gtt(a, r, th) * gphph(a, r, th) + gtph(a, r, th) ** 2)
+    factor = 1 / (4 * gtt(a, r, th) * gphph(a, r, th) - gtph(a, r, th) ** 2)
+
+    sum1 = gtph(a, r, th) * (td * ddtau_tph(a, r, th, thd, rd) + 2 * phid * ddtau_phph(a, r, th, thd, rd))
+    sum2 = 2 * gtt(a, r, th) * (2 * td * ddtau_tt(a, r, th, thd, rd) + phid * ddtau_tph(a, r, th, thd, rd))
+
+    return factor * (sum1 - sum2)
+    factor = gphph(a, r, th) / (gtt(a, r, th) * gphph(a, r, th) - gtph(a, r, th) ** 2)
 
     sum1 = gtph(a, r, th) / gphph(a, r, th) * (td * ddtau_tph(a, r, th, thd, rd) +
                                                phid * ddtau_phph(a, r, th, thd, rd))
     sum2 = td * ddtau_tt(a, r, th, thd, rd) + phid * ddtau_tph(a, r, th, thd, rd)
 
-    return factor * (sum1 + sum2)
+    return factor * (sum1 - sum2)
 
 
 def rdd(a, r, th, td, rd, thd, phid):
     sum = td ** 2 * ddr_gtt(a, r, th) + \
-          2 * td * phid * ddr_gtph(a, r, th) + \
+          td * phid * ddr_gtph(a, r, th) + \
           phid ** 2 * ddr_gphph(a, r, th) + \
           rd ** 2 * ddr_grr(a, r, th) + \
           thd ** 2 * ddr_gthth(a, r, th) - \
@@ -50,7 +56,7 @@ def rdd(a, r, th, td, rd, thd, phid):
 
 def thdd(a, r, th, td, rd, thd, phid):
     sum = td ** 2 * ddth_gtt(a, r, th) + \
-          2 * td * phid * ddth_gtph(a, r, th) + \
+          td * phid * ddth_gtph(a, r, th) + \
           phid ** 2 * ddth_gphph(a, r, th) + \
           rd ** 2 * ddth_grr(a, r, th) + \
           thd ** 2 * ddth_gthth(a, r, th) - \
@@ -60,14 +66,21 @@ def thdd(a, r, th, td, rd, thd, phid):
 
 
 def phidd(a, r, th, td, rd, thd, phid):
-    factor = - gtt(a, r, th) / (gtt(a, r, th) * gphph(a, r, th) + gtph(a, r, th) ** 2)
+    factor = 1 / (4 * gtt(a, r, th) * gphph(a, r, th) - gtph(a, r, th) ** 2)
+
+    sum1 = gtph(a, r, th) * (2 * td * ddtau_tt(a, r, th, thd, rd) + phid * ddtau_tph(a, r, th, thd, rd))
+
+    sum2 = 2 * gphph(a, r, th) * (td * ddtau_tph(a, r, th, thd, rd) + 2 * phid * ddtau_phph(a, r, th, thd, rd))
+
+    return factor * (sum1 - sum2)
+    factor = gtt(a, r, th) / (gtt(a, r, th) * gphph(a, r, th) - gtph(a, r, th) ** 2)
 
     sum1 = gtph(a, r, th) / gtt(a, r, th) * (td * ddtau_tt(a, r, th, thd, rd) +
                                                phid * ddtau_tph(a, r, th, thd, rd))
 
     sum2 = td * ddtau_tph(a, r, th, thd, rd) + phid * ddtau_phph(a, r, th, thd, rd)
 
-    return factor * (sum1 + sum2)
+    return factor * (sum1 - sum2)
 
 # metric elements:
 
@@ -81,7 +94,7 @@ def gtph(a, r, th):
 
 
 def gphph(a, r, th):
-    return np.sin(th) ** 2 * (r ** 2 + a ** 2 + 2 * r * a ** 2 / (r ** 2 + a ** 2 * np.cos(th) ** 2))
+    return np.sin(th) ** 2 * (r ** 2 + a ** 2 + 2 * r * a ** 2 * np.sin(th) ** 2 / (r ** 2 + a ** 2 * np.cos(th) ** 2))
 
 
 def grr(a, r, th):
@@ -112,9 +125,9 @@ def ddth_gtph(a, r, th):
 
 
 def ddth_gphph(a, r, th):
-    return 2 * np.cos(th) * np.sin(th) * (r ** 2 + a ** 2 + 2 * r * a ** 2 * (r**2 + a ** 2) /
-                                          (r ** 2 + a ** 2 * np.cos(th) ** 2) ** 2)
-
+    x = r ** 2 + a ** 2 * np.cos(th) ** 2
+    return 2 * np.cos(th) * np.sin(th) * (r ** 2 + a ** 2 + 3 * r * a ** 2 * np.sin(th) ** 2 / x +
+                                          2 * r * a ** 4 * np.sin(th) ** 4 / x ** 2)
 
 # derivatives r:
 
@@ -124,11 +137,11 @@ def ddr_gtt(a, r, th):
 
 
 def ddr_gtph(a, r, th):
-    return 4 * a * np.sin(th) ** 2 * (r - a ** 2 * np.cos(th) ** 2) / (r ** 2 + a ** 2 * np.cos(th) ** 2) ** 2
+    return 4 * a * np.sin(th) ** 2 * (r ** 2 - a ** 2 * np.cos(th) ** 2) / (r ** 2 + a ** 2 * np.cos(th) ** 2) ** 2
 
 
 def ddr_gphph(a, r, th):
-    return 2 * np.sin(th) ** 2 * (r - 2 * a ** 2 * (r - a ** 2 * np.cos(th) ** 2) / (r ** 2 + a ** 2 * np.cos(th) ** 2) ** 2)
+    return np.sin(th) ** 2 * (2 * r - 2 * a ** 2 * np.sin(th) ** 2 * (r ** 2 - a ** 2 * np.cos(th) ** 2) / (r ** 2 + a ** 2 * np.cos(th) ** 2) ** 2)
 
 
 def ddr_grr(a, r, th):
@@ -143,7 +156,6 @@ def ddr_gthth(a, r, th):
 
 
 def ddtau_tt(a, r, th, dth, dr):
-    print(ddr_gtt(a, r, th))
     return ddr_gtt(a, r, th) * dr + ddth_gtt(a, r, th) * dth
 
 

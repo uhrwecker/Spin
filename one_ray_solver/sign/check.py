@@ -18,6 +18,7 @@ class SignImpactSchwarzschild:
         signs = [(-1, -1, -1), (1, -1, -1), (-1, 1, -1), (1, 1, -1),
                  (-1, -1, 1), (1, -1, 1), (-1, 1, 1), (1, 1, 1)]
 
+        sign_t = 1
         dist = 10000
         best_signs = (-1, -1, -1)
 
@@ -27,7 +28,7 @@ class SignImpactSchwarzschild:
             sign_q = sign_comb[1]
             sign_l = sign_comb[2]
 
-            self.solver.change_signs(sign_r=sign_r, sign_q=sign_q, sign_l=sign_l, recalc=False)
+            self.solver.change_signs(sign_r=sign_r, sign_q=sign_q, sign_l=sign_l, sign_t=sign_t, recalc=False)
             self.solver.change_emission_point(self.rem, self.tem, self.pem)
             _, data = self.solver.solve()
 
@@ -39,13 +40,14 @@ class SignImpactSchwarzschild:
 
         if not dist < 1e-1:
             print(f'Somethings not quite right here! Smallest distance {dist}.')
-            problem_flag = True
 
+            problem_flag = True
+        #print(self.rem, self.tem, self.pem)
         sign_r = best_signs[0]
         sign_q = best_signs[1]
         sign_l = best_signs[2]
 
-        self.solver.change_signs(sign_r=sign_r, sign_q=sign_q, sign_l=sign_l, recalc=False)
+        self.solver.change_signs(sign_r=sign_r, sign_q=sign_q, sign_l=sign_l, sign_t=sign_t, recalc=False)
         self.solver.change_emission_point(self.rem, self.tem, self.pem)
 
         return problem_flag
@@ -103,8 +105,9 @@ class SignImpactSchwarzschild:
         Z = r0 * np.cos(t0)
 
         dist = np.sqrt((x - X) ** 2 + (y - Y) ** 2 + (z - Z) ** 2)
+        #print(np.amin(dist))
 
-        if np.amin(dist) < 1e-2:
+        if np.amin(dist) < 2e-2:
             return True, np.amin(dist)
 
         else:

@@ -98,6 +98,8 @@ class RayHandler:
         # first, multiprocessing pool for cpu count - 1, because we might want to hear music idk
         pool = pt.pools.ProcessPool(mp.cpu_count()-1)
         for result in tqdm(pool.uimap(self.multiprocess_step, alpha_beta_matrix), total=len(alpha_beta_matrix)):
+        #for item in alpha_beta_matrix:
+        #    result = self.multiprocess_step(item)
             # append the results
             data_form.append(list(result[0:3]))
             number_of_collisions += result[3]
@@ -116,11 +118,9 @@ class RayHandler:
             self.save_exp.save_redshift(data_form)
 
         data_form = np.array(data_form)
-        return self.save_exp.config, number_of_collisions, data_form[data_form[:, 2] > 0, :]
+        return self.save_exp.config, number_of_collisions, data_form[np.abs(data_form[:, 2]) > 0, :]
 
     def multiprocess_step(self, input_alpha_beta):
-        number_of_collisions = 0
-
         # compute the input:
         alpha, beta = input_alpha_beta
 
@@ -129,9 +129,11 @@ class RayHandler:
 
         # add to collision detector
         if np.abs(g) > 0:
-            number_of_collisions = 1
+            return alpha, beta, g, 1
+        else:
+            return alpha, beta, g, 0
 
-        return alpha, beta, g, number_of_collisions
+        #return alpha, beta, g, number_of_collisions
 
     def step(self, solver, alpha, beta):
         # main routine to setup and calculate ONE ray from a specific solver (important for multithredding) and

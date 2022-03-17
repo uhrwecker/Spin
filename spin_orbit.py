@@ -69,7 +69,7 @@ def main():
 
     if args.adjust_range:
         import numpy as np
-        phis = np.linspace(0, 2*np.pi, num=args.number)
+        phis = np.linspace(0.841056300961047, 2*np.pi, num=args.number-17)
         for n, phi in enumerate(phis):
             data = np.loadtxt(args.save_range+'2', delimiter=';')
             guess = (np.mean(data[n][3:5]), np.mean(data[n][5:]))

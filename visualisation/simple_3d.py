@@ -104,11 +104,11 @@ class Simple3DPlotter:
 
         xy = np.amax([x, y])
 
-        #self.ax.set_xlim(x-0.1, x+0.1)
-        #self.ax.set_ylim(y-0.1, y+0.1)
+        #self.ax.set_xlim(x-2, x+2)
+        #self.ax.set_ylim(y-2, y+2)
         #self.ax.set_zlim(-0.1, 0.1)
-        self.ax.set_xlim(-xy-1, xy+1)
-        self.ax.set_ylim(-xy-1, xy+1)
+        self.ax.set_xlim(-xy-2, xy+2)
+        self.ax.set_ylim(-xy-2, xy+2)
         self.ax.set_zlim(-3/4*xy, 3/4*xy)
 
         self.ax.set_xlabel('x / M')

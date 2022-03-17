@@ -98,7 +98,7 @@ def main():
         from one_ray_solver.solve import OneRaySolver
         from visualisation.simple_3d import Simple3DPlotter
 
-        ors = OneRaySolver(s=geo['s'], geometry=geometry,
+        ors = OneRaySolver(s=geo['s'], geometry=geometry, bha=geo['bh_a'],
                            rem=em['r_em'], tem=em['theta_em'], pem=em['phi_em'],
                            robs=obs['r_obs'], tobs=obs['theta_obs'], pobs=obs['phi_obs'], m=1, **num,
                            alpha=0, beta=0, shape=geo['shape'], save_even_when_not_colliding=False,

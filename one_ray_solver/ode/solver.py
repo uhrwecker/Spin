@@ -58,6 +58,7 @@ class ODESolverKerr:
         self.sign_r = sign_r
         self.sign_q = sign_q
         self.sign_l = sign_l
+        self.sign_t = 1
 
         self.dt, self.dr, self.dtheta, self.dphi = self.get_ic_from_com(l, q,
                                                                         sign_r=sign_r, sign_q=sign_q, sign_l=sign_l)
@@ -81,7 +82,7 @@ class ODESolverKerr:
 
         return self.sigma, result
 
-    def get_ic_from_com(self, l, q, sign_r=-1, sign_l=1, sign_q=1):
+    def get_ic_from_com(self, l, q, sign_r=-1, sign_l=1, sign_q=1, sign_t=1):
         delta = self.robs ** 2 - 2 * self.robs + self.bha ** 2
         sigma = self.robs ** 2 + self.bha ** 2 * np.cos(self.tobs) ** 2
         T_func = self.robs ** 2 + self.bha ** 2 - l * self.bha
@@ -89,7 +90,7 @@ class ODESolverKerr:
                  2 * (q + (l - self.bha) ** 2) * self.robs - self.bha ** 2 * q
         Th_func = q + self.bha ** 2 * np.cos(self.tobs) ** 2 - l ** 2 / np.tan(self.tobs) ** 2
 
-        dt = 1 / sigma * (- self.bha * (self.bha * np.sin(self.tobs) ** 2 - l) +
+        dt = sign_t / sigma * (- self.bha * (self.bha * np.sin(self.tobs) ** 2 - l) +
                           (self.robs ** 2 + self.bha ** 2) * T_func / delta)
 
         dtheta = sign_q / sigma * np.sqrt(Th_func)
@@ -107,16 +108,17 @@ class ODESolverKerr:
 
         if recalc:
             self.dt, self.dr, self.dtheta, self.dphi = self.get_ic_from_com(self.l, self.q, self.sign_r, self.sign_l,
-                                                                            self.sign_q)
+                                                                            self.sign_q, self.sign_t)
 
-    def change_signs(self, sign_r, sign_q, sign_l, recalc=True):
+    def change_signs(self, sign_r, sign_q, sign_l, sign_t, recalc=True):
         self.sign_r = sign_r
         self.sign_q = sign_q
         self.sign_l = sign_l
+        self.sign_t = sign_t
 
         if recalc:
             self.dt, self.dr, self.dtheta, self.dphi = self.get_ic_from_com(self.l, self.q, self.sign_r, self.sign_l,
-                                                                            self.sign_q)
+                                                                            self.sign_q, self.sign_t)
 
     def change_constants_of_motion(self, lamda, qu, recalc=True):
         self.l = lamda
