@@ -31,7 +31,7 @@ def tdd(a, r, th, td, rd, thd, phid):
     factor = 1 / (4 * gtt(a, r, th) * gphph(a, r, th) - gtph(a, r, th) ** 2)
 
     sum1 = gtph(a, r, th) * (td * ddtau_tph(a, r, th, thd, rd) + 2 * phid * ddtau_phph(a, r, th, thd, rd))
-    sum2 = 2 * gtt(a, r, th) * (2 * td * ddtau_tt(a, r, th, thd, rd) + phid * ddtau_tph(a, r, th, thd, rd))
+    sum2 = 2 * gphph(a, r, th) * (2 * td * ddtau_tt(a, r, th, thd, rd) + phid * ddtau_tph(a, r, th, thd, rd))
 
     return factor * (sum1 - sum2)
     factor = gphph(a, r, th) / (gtt(a, r, th) * gphph(a, r, th) - gtph(a, r, th) ** 2)
@@ -70,7 +70,7 @@ def phidd(a, r, th, td, rd, thd, phid):
 
     sum1 = gtph(a, r, th) * (2 * td * ddtau_tt(a, r, th, thd, rd) + phid * ddtau_tph(a, r, th, thd, rd))
 
-    sum2 = 2 * gphph(a, r, th) * (td * ddtau_tph(a, r, th, thd, rd) + 2 * phid * ddtau_phph(a, r, th, thd, rd))
+    sum2 = 2 * gtt(a, r, th) * (td * ddtau_tph(a, r, th, thd, rd) + 2 * phid * ddtau_phph(a, r, th, thd, rd))
 
     return factor * (sum1 - sum2)
     factor = gtt(a, r, th) / (gtt(a, r, th) * gphph(a, r, th) - gtph(a, r, th) ** 2)

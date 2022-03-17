@@ -18,7 +18,7 @@ class SignImpactSchwarzschild:
         signs = [(-1, -1, -1), (1, -1, -1), (-1, 1, -1), (1, 1, -1),
                  (-1, -1, 1), (1, -1, 1), (-1, 1, 1), (1, 1, 1)]
 
-        sign_t = 1
+        sign_t = -1
         dist = 10000
         best_signs = (-1, -1, -1)
 
@@ -40,9 +40,8 @@ class SignImpactSchwarzschild:
 
         if not dist < 1e-1:
             print(f'Somethings not quite right here! Smallest distance {dist}.')
-
             problem_flag = True
-        #print(self.rem, self.tem, self.pem)
+
         sign_r = best_signs[0]
         sign_q = best_signs[1]
         sign_l = best_signs[2]

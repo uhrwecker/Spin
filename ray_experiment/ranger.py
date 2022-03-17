@@ -16,7 +16,7 @@ class RangeAdjustment:
         if self.rho > 1:
             raise ValueError('This Range finder can only handle for radii rho < 1.')
 
-        self.width = 1
+        self.width = 5
         self.resolution = 15
 
         self.alpha_centre = 0
