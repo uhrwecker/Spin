@@ -18,11 +18,30 @@ class SignImpactSchwarzschild:
         signs = [(-1, -1, -1), (1, -1, -1), (-1, 1, -1), (1, 1, -1),
                  (-1, -1, 1), (1, -1, 1), (-1, 1, 1), (1, 1, 1)]
 
-        sign_t = -1
+        best_t = -1
         dist = 10000
         best_signs = (-1, -1, -1)
 
         for sign_comb in signs:
+            sign_t = -1
+            # initial guess:
+            sign_r = sign_comb[0]
+            sign_q = sign_comb[1]
+            sign_l = sign_comb[2]
+
+            self.solver.change_signs(sign_r=sign_r, sign_q=sign_q, sign_l=sign_l, sign_t=sign_t, recalc=False)
+            self.solver.change_emission_point(self.rem, self.tem, self.pem)
+            _, data = self.solver.solve()
+
+            coll, smallest_distance = self._check_if_at_observer(data)
+
+            if dist > smallest_distance:
+                best_t = sign_t
+                dist = smallest_distance
+                best_signs = sign_comb
+
+        for sign_comb in signs:
+            sign_t = 1
             # initial guess:
             sign_r = sign_comb[0]
             sign_q = sign_comb[1]
@@ -37,11 +56,14 @@ class SignImpactSchwarzschild:
             if dist > smallest_distance:
                 dist = smallest_distance
                 best_signs = sign_comb
+                best_t = sign_t
 
-        if not dist < 1e-1:
-            print(f'Somethings not quite right here! Smallest distance {dist}.')
+        if not dist < 5e-2:
+            if dist > 5e-2:
+                print(f'Somethings not quite right here! Smallest distance {dist}.')
             problem_flag = True
 
+        sign_t = best_t
         sign_r = best_signs[0]
         sign_q = best_signs[1]
         sign_l = best_signs[2]

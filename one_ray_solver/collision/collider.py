@@ -23,6 +23,7 @@ class Collider:
             self.shape = ellipse
 
     def check(self, ray):
+        t = ray[:, 0]
         r = ray[:, 2]
         theta = ray[:, 4]
         phi = ray[:, 6]

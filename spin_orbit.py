@@ -36,6 +36,8 @@ def get_parser():
                              'Works only with -r flag on, as it only works on the redshift files.')
     parser.add_argument('--repair_only', action='store_true', dest='repair_only', default=False,
                         help='Only run the repair tool on existing redshift data; no further simulation will be done.')
+    parser.add_argument('--no-sve-cfg', action='store_true', dest='no_save_cfg', default=False,
+                        help='Disable the saving of the .json formatted config file for every ray.')
 
     return parser
 
@@ -118,7 +120,7 @@ def main():
                     **screen, m=1, **num, fp=save_fp, saver='json', shape=geo['shape'],
                     save_even_when_not_colliding=args.save_even_when_not_colliding, save_handle=None,
                     save_csv=args.save_csv, save_redshift=args.save_redshift,
-                    save_config=~args.dont_save_exp_config, save_data=args.save)
+                    save_config=~args.dont_save_exp_config, save_data=not args.no_save_cfg)
 
     if not args.repair_only:
         print('Starting the run...')

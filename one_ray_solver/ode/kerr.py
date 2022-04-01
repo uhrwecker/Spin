@@ -34,13 +34,13 @@ def tdd(a, r, th, td, rd, thd, phid):
     sum2 = 2 * gphph(a, r, th) * (2 * td * ddtau_tt(a, r, th, thd, rd) + phid * ddtau_tph(a, r, th, thd, rd))
 
     return factor * (sum1 - sum2)
-    factor = gphph(a, r, th) / (gtt(a, r, th) * gphph(a, r, th) - gtph(a, r, th) ** 2)
+    #factor = gphph(a, r, th) / (gtt(a, r, th) * gphph(a, r, th) - gtph(a, r, th) ** 2)
 
-    sum1 = gtph(a, r, th) / gphph(a, r, th) * (td * ddtau_tph(a, r, th, thd, rd) +
-                                               phid * ddtau_phph(a, r, th, thd, rd))
-    sum2 = td * ddtau_tt(a, r, th, thd, rd) + phid * ddtau_tph(a, r, th, thd, rd)
+    #sum1 = gtph(a, r, th) / gphph(a, r, th) * (td * ddtau_tph(a, r, th, thd, rd) +
+#                                               phid * ddtau_phph(a, r, th, thd, rd))
+    #sum2 = td * ddtau_tt(a, r, th, thd, rd) + phid * ddtau_tph(a, r, th, thd, rd)
 
-    return factor * (sum1 - sum2)
+    #return factor * (sum1 - sum2)
 
 
 def rdd(a, r, th, td, rd, thd, phid):
@@ -73,14 +73,14 @@ def phidd(a, r, th, td, rd, thd, phid):
     sum2 = 2 * gtt(a, r, th) * (td * ddtau_tph(a, r, th, thd, rd) + 2 * phid * ddtau_phph(a, r, th, thd, rd))
 
     return factor * (sum1 - sum2)
-    factor = gtt(a, r, th) / (gtt(a, r, th) * gphph(a, r, th) - gtph(a, r, th) ** 2)
+#    factor = gtt(a, r, th) / (gtt(a, r, th) * gphph(a, r, th) - gtph(a, r, th) ** 2)
 
-    sum1 = gtph(a, r, th) / gtt(a, r, th) * (td * ddtau_tt(a, r, th, thd, rd) +
-                                               phid * ddtau_tph(a, r, th, thd, rd))
+#    sum1 = gtph(a, r, th) / gtt(a, r, th) * (td * ddtau_tt(a, r, th, thd, rd) +
+#                                               phid * ddtau_tph(a, r, th, thd, rd))
 
-    sum2 = td * ddtau_tph(a, r, th, thd, rd) + phid * ddtau_phph(a, r, th, thd, rd)
+#    sum2 = td * ddtau_tph(a, r, th, thd, rd) + phid * ddtau_phph(a, r, th, thd, rd)
 
-    return factor * (sum1 - sum2)
+#    return factor * (sum1 - sum2)
 
 # metric elements:
 
@@ -126,7 +126,7 @@ def ddth_gtph(a, r, th):
 
 def ddth_gphph(a, r, th):
     x = r ** 2 + a ** 2 * np.cos(th) ** 2
-    return 2 * np.cos(th) * np.sin(th) * (r ** 2 + a ** 2 + 3 * r * a ** 2 * np.sin(th) ** 2 / x +
+    return 2 * np.cos(th) * np.sin(th) * (r ** 2 + a ** 2 + 4 * r * a ** 2 * np.sin(th) ** 2 / x +
                                           2 * r * a ** 4 * np.sin(th) ** 4 / x ** 2)
 
 # derivatives r:
@@ -145,7 +145,7 @@ def ddr_gphph(a, r, th):
 
 
 def ddr_grr(a, r, th):
-    return - (2 * r ** 2 - a ** 2 * (1 - 2 * np.cos(th) ** 2 * (r - 1))) / (r ** 2 - 2 * r + a ** 2) ** 2
+    return - (2 * r ** 2 - a ** 2 * (2 * r - 2 * np.cos(th) ** 2 * (r - 1))) / (r ** 2 - 2 * r + a ** 2) ** 2
 
 
 def ddr_gthth(a, r, th):
@@ -172,4 +172,4 @@ def ddtau_rr(a, r, th, dth, dr):
 
 
 def ddtau_thth(a, r, th, dth, dr):
-    return 2 * r * dr - 2 * a ** 2 * np.sin(th) * np.cos(th) * dth
+    return ddr_gthth(a, r, th) * dr + ddth_gthth(a, r, th) * dth

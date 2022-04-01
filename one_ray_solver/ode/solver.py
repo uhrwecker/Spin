@@ -95,7 +95,9 @@ class ODESolverKerr:
 
         dtheta = sign_q / sigma * np.sqrt(Th_func)
 
-        dr = sign_r / sigma * np.sqrt(R_func)
+        #if R_func < 0:
+        #    R_func = 0
+        dr = sign_r * np.sqrt(np.abs(R_func)/sigma**2)
 
         dphi = sign_l / sigma * (- self.bha + l / np.sin(self.tobs) ** 2 + self.bha * T_func / delta)
 

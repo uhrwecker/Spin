@@ -63,9 +63,9 @@ class RangeAdjustment:
     def check_hits(self):
         hit = False
 
-        if self.resolution >= 80:
+        if self.resolution >= 30:
             print('Resolution too high; somethings not working.')
-            self.resolution = 25
+            self.resolution = 10
             self.alpha_centre, self.beta_centre = self.guess
             self.width = 3
             self.ray.geometry[0] = 2.5
