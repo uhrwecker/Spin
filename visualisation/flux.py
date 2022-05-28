@@ -32,6 +32,10 @@ class FluxPlotter:
             flux.append(flux[0])
             phis.append(np.pi*2)
 
+            for n in range(len(flux)-1):
+                if np.abs(1 - flux[n] / flux[n+1]) > 0.2:
+                    flux[n+1] = (flux[n] + flux[n +2]) / 2
+
             #flux, phis = _check_for_outliers(flux, phis)
 
             if fp == '/home/jan-menno/Data/no_v_orbit/s0/':
@@ -139,42 +143,18 @@ def _check_for_outliers(data, phi):
     #return data, new_x#phi
 
 
-#ff = FluxPlotter(fp=['/home/jan-menno/Data/fix/s-0175/',
-#                     '/home/jan-menno/Data/fix/s-015/',
-#                     '/home/jan-menno/Data/fix/s-01/',
-#                     '/home/jan-menno/Data/fix/s-005/',
-#                     '/home/jan-menno/Data/fix/s0/',
-#                    '/home/jan-menno/Data/fix/s005/',
-#                     '/home/jan-menno/Data/fix/s01/',
-#                     '/home/jan-menno/Data/fix/s015/'],
-#                 labels=['s=-0.175', 's=-0.15', 's=-0.10', 's=-0.05', 's= 0.00',
-#                         's= 0.05', 's= 0.10', 's= 0.15'])
-#ff = FluxPlotter(fp=['/home/jan-menno/Data/08_12_21/s-015/',
-#                     '/home/jan-menno/Data/08_12_21/s-01/',
-#                     '/home/jan-menno/Data/08_12_21/s-005/',
-#                     '/home/jan-menno/Data/fix/s0/'],
-#                 labels=['s=-0.15', 's=-0.10', 's=-0.05', 's= 0.00'])
-ff = FluxPlotter(fp=['/media/jan-menno/T7/Schwarzschild/maclaurin/s0175/',
-                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s015/',
-                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s01/',
-                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s005/',
-                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s0/',
-                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s-005/',
-                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s-01/',
-                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s-015/',
-                     '/media/jan-menno/T7/Schwarzschild/maclaurin/s-0175/'],
+ff = FluxPlotter(fp=['/media/jan-menno/T7/Kerr/sphere/a-01/s0175/',
+                     '/media/jan-menno/T7/Kerr/sphere/a-01/s015/',
+                     '/media/jan-menno/T7/Kerr/sphere/a-01/s01/',
+                     '/media/jan-menno/T7/Kerr/sphere/a-01/s005/',
+                     '/media/jan-menno/T7/Kerr/sphere/a-01/s0/',
+                     '/media/jan-menno/T7/Kerr/sphere/a-01/s-005/',
+                     '/media/jan-menno/T7/Kerr/sphere/a-01/s-01/',
+                     '/media/jan-menno/T7/Kerr/sphere/a-01/s-015/',
+                     '/media/jan-menno/T7/Kerr/sphere/a-01/s-0175/'],
                  labels=['s =  0.00175', 's =  0.0015', 's =  0.0010', 's =  0.0005', 's =  0.0000',
                          's = -0.0005', 's = -0.0010', 's = -0.0015', 's = -0.00175'])
-#ff = FluxPlotter(fp=['/home/jan-menno/Data/27_12_21/s0/',
-#                     '/home/jan-menno/Data/27_12_21/s-005/',
-#                     '/home/jan-menno/Data/27_12_21/s-01/',
-#                     '/home/jan-menno/Data/27_12_21/s-015/',
-#                     '/home/jan-menno/Data/27_12_21/s-0175/',
-#                     '/home/jan-menno/Data/27_12_21/s-0185/'])
-#ff = FluxPlotter(fp=['/home/jan-menno/Data/02_01_22/s0/',
-#                     '/home/jan-menno/Data/02_01_22/s-01/',
-#                     '/home/jan-menno/Data/02_01_22/s-015/'])
 ff.plot_monochrome()
 pl.grid()
-pl.ylim(0, 0.021)
+pl.ylim(0, 0.025)
 ff.show()
