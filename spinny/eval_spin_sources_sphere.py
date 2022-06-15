@@ -26,7 +26,7 @@ def red(rem, tem, pem, robs, tobs, pobs, gamma, v, gamma2, u1, u3):
     return robs / (f1 - f2 - f3)
 
 
-def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1.):
+def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1., v3=0.5):
     # step 0:
     fp_to_json = fp_to_redshift + 'data/'
 
@@ -80,7 +80,7 @@ def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1
             surf = surface_vel.SurfaceVelocityRigidSphere(s, [rho, T, P])
 
             # step 6b: eval velocities
-            v3 = 0.5
+            #v3 = 0.1
             gv3 = 1/np.sqrt(1 - v3 ** 2)#(v3, ), gv3 = orbit.get_velocity()
             #(rv, ), grv = rel_vel.get_velocity()
             rv = 0.0
@@ -88,9 +88,6 @@ def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1
             (u1, u3), gu = surf.get_velocity()
 
             # step 7: calculate redshift
-            dr = config['INITIAL_DATA']['dr']
-            dtheta = config['INITIAL_DATA']['dtheta']
-            dphi = config['INITIAL_DATA']['r0']
 
             g = redshift.g(p0, p1, p3, v3, gv3, rv, grv, u1, u3, gu)
             #g = red(rem, tem, pem, robs, tobs, pobs, gv3, v3, gu, u1, u3)
@@ -102,7 +99,7 @@ def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1
             #A = (robs ** 2 + a ** 2) ** 2 - delta * a * np.sin(tobs) ** 2
             #omega = 2 * a * robs / A
             #e_min_nu = np.sqrt(A / ((robs ** 2 + a ** 2 * np.cos(tobs) ** 2) * delta))
-            #g = 1 / g
+            g = 1 / g
 
             break
 

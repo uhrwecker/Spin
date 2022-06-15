@@ -5,11 +5,12 @@ from eval_spin_sources_sphere import eval_spin_stuff
 
 
 def main():
-    s = -0.00
+    s = 0.000
     rem = 8.0
+    v3 = 0.
 
-    fp_to_data = '/media/jan-menno/T7/Flat/s0/'
-    fp_to_save = '/media/jan-menno/T7/Flat/analy/'
+    fp_to_data = '/media/jan-menno/T7/Flat/v05/s0/'
+    fp_to_save = '/media/jan-menno/T7/Flat/v0/s0/'
 
     print('Load data (this may take some time) ...')
     start = time.time()
@@ -29,7 +30,7 @@ def main():
         except FileExistsError:
             continue
 
-        eval_spin_stuff(s, rem, file, fp_to_save + phi + '/')
+        eval_spin_stuff(s, rem, file, fp_to_save + phi + '/', v3=v3)
 
     t = time.time() - start
     print(f'Done! Took {t} s (or {t / 60} min).')
