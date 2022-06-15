@@ -34,7 +34,6 @@ class Collider:
 
         # find the minimal distance:
         r_col, t_col, p_col = self.shape.collision_with_object(r, theta, phi, (self.rem, self.tem, self.pem), self.geometry)
-
         if not r_col:
             return [], [], False
 
@@ -42,7 +41,6 @@ class Collider:
 
         r_col, t_col, p_col = self.shape.collision_with_object(rn, thetan, phin, (self.rem, self.tem, self.pem),
                                                                self.geometry)
-
         if not r_col:
             return [], [], False
 

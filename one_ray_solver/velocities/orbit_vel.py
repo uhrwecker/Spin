@@ -42,3 +42,12 @@ class OrbitVelocityKerr(velocity_abc.VelocityABC):
              + np.sqrt(root)) / denominator
 
         return (v, ), 1 / np.sqrt(1 - v ** 2)
+
+
+class OrbitVelocityFlat(velocity_abc.VelocityABC):
+    def __init__(self, s, a, position):
+        self.a = a
+        super().__init__(s, position)
+
+    def _calculate_velocity(self):
+        return (0.5, ), 1 / np.sqrt(1 - 0.25)

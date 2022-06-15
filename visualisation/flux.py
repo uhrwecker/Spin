@@ -143,18 +143,18 @@ def _check_for_outliers(data, phi):
     #return data, new_x#phi
 
 
-ff = FluxPlotter(fp=['/media/jan-menno/T7/Kerr/sphere/a-01/s0175/',
-                     '/media/jan-menno/T7/Kerr/sphere/a-01/s015/',
-                     '/media/jan-menno/T7/Kerr/sphere/a-01/s01/',
-                     '/media/jan-menno/T7/Kerr/sphere/a-01/s005/',
-                     '/media/jan-menno/T7/Kerr/sphere/a-01/s0/',
-                     '/media/jan-menno/T7/Kerr/sphere/a-01/s-005/',
-                     '/media/jan-menno/T7/Kerr/sphere/a-01/s-01/',
-                     '/media/jan-menno/T7/Kerr/sphere/a-01/s-015/',
-                     '/media/jan-menno/T7/Kerr/sphere/a-01/s-0175/'],
+ff = FluxPlotter(fp=['/media/jan-menno/T7/Flat/s0175/',
+                     '/media/jan-menno/T7/Flat/s015/',
+                     '/media/jan-menno/T7/Flat/s01/',
+                     '/media/jan-menno/T7/Flat/s005/',
+                     '/media/jan-menno/T7/Flat/s0/',
+                     '/media/jan-menno/T7/Flat/s-005/',
+                     '/media/jan-menno/T7/Flat/s-01/',
+                     '/media/jan-menno/T7/Flat/s-015/',
+                     '/media/jan-menno/T7/Flat/s-0175/'],
                  labels=['s =  0.00175', 's =  0.0015', 's =  0.0010', 's =  0.0005', 's =  0.0000',
                          's = -0.0005', 's = -0.0010', 's = -0.0015', 's = -0.00175'])
 ff.plot_monochrome()
 pl.grid()
-pl.ylim(0, 0.025)
+pl.ylim(0, 0.035)
 ff.show()

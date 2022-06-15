@@ -4,7 +4,7 @@ import contextlib
 import os
 import sys
 
-from one_ray_solver.ode import kerr
+from one_ray_solver.ode import flat
 
 
 def fileno(file_or_fd):
@@ -78,28 +78,23 @@ class ODESolverKerr:
         psi = np.array([self.t0, self.dt, self.robs, self.dr, self.tobs, self.dtheta, self.pobs, self.dphi])
 
         with stdout_redirected():
-            result = odeint(kerr.geod, psi, self.sigma, args=(self.m, self.bha), atol=self.abserr, rtol=self.relerr)
+            result = odeint(flat.geod, psi, self.sigma, args=(self.m, self.bha), atol=self.abserr, rtol=self.relerr)
 
         return self.sigma, result
 
-    def get_ic_from_com(self, l, q, sign_r=-1, sign_l=1, sign_q=1, sign_t=1):
-        delta = self.robs ** 2 - 2 * self.robs + self.bha ** 2
-        sigma = self.robs ** 2 + self.bha ** 2 * np.cos(self.tobs) ** 2
-        T_func = self.robs ** 2 + self.bha ** 2 - l * self.bha
-        R_func = self.robs ** 4 - (q + l ** 2 - self.bha ** 2) * self.robs ** 2 + \
-                 2 * (q + (l - self.bha) ** 2) * self.robs - self.bha ** 2 * q
-        Th_func = q + self.bha ** 2 * np.cos(self.tobs) ** 2 - l ** 2 / np.tan(self.tobs) ** 2
+    def get_ic_from_com(self, l, q, sign_r=-1, sign_l=1, sign_q=-1, sign_t=1):
+        dt = sign_t
 
-        dt = sign_t / sigma * (- self.bha * (self.bha * np.sin(self.tobs) ** 2 - l) +
-                          (self.robs ** 2 + self.bha ** 2) * T_func / delta)
-
-        dtheta = sign_q / sigma * np.sqrt(Th_func)
+        if q - l**2 / np.tan(self.tobs) ** 2 < 0:
+            dtheta = sign_q / self.robs ** 2 * np.sqrt(np.abs(q - l**2 / np.tan(self.tobs) ** 2))
+        else:
+            dtheta = sign_q / self.robs ** 2 * np.sqrt(q - l**2 / np.tan(self.tobs) ** 2)
 
         #if R_func < 0:
         #    R_func = 0
-        dr = sign_r * np.sqrt(np.abs(R_func)/sigma**2)
+        dr = sign_r * np.sqrt(1 - (q + l**2) / self.robs**2)
 
-        dphi = sign_l / sigma * (- self.bha + l / np.sin(self.tobs) ** 2 + self.bha * T_func / delta)
+        dphi = sign_l * l / (self.robs ** 2 * np.sin(self.tobs)**2)
 
         return dt, dr, dtheta, dphi
 

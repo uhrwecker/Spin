@@ -18,27 +18,9 @@ class SignImpactSchwarzschild:
         signs = [(-1, -1, -1), (1, -1, -1), (-1, 1, -1), (1, 1, -1),
                  (-1, -1, 1), (1, -1, 1), (-1, 1, 1), (1, 1, 1)]
 
-        best_t = -1
+        best_t = 1
         dist = 10000
         best_signs = (-1, -1, -1)
-
-        for sign_comb in signs:
-            sign_t = -1
-            # initial guess:
-            sign_r = sign_comb[0]
-            sign_q = sign_comb[1]
-            sign_l = sign_comb[2]
-
-            self.solver.change_signs(sign_r=sign_r, sign_q=sign_q, sign_l=sign_l, sign_t=sign_t, recalc=False)
-            self.solver.change_emission_point(self.rem, self.tem, self.pem)
-            _, data = self.solver.solve()
-
-            coll, smallest_distance = self._check_if_at_observer(data)
-
-            if dist > smallest_distance:
-                best_t = sign_t
-                dist = smallest_distance
-                best_signs = sign_comb
 
         for sign_comb in signs:
             sign_t = 1
@@ -54,9 +36,9 @@ class SignImpactSchwarzschild:
             coll, smallest_distance = self._check_if_at_observer(data)
 
             if dist > smallest_distance:
+                best_t = sign_t
                 dist = smallest_distance
                 best_signs = sign_comb
-                best_t = sign_t
 
         if not dist < 5e-2:
             if dist > 5e-2:
@@ -92,20 +74,9 @@ class SignImpactSchwarzschild:
         return pt, pr, pth, pphi
 
     def calculate_initial_momenta_ZAMO(self):
-        a = self.solver.bha
-        delta = self.rem ** 2 - 2 * self.rem + a ** 2
-        A = (self.rem ** 2 + a ** 2) ** 2 - delta * a ** 2 * np.sin(self.tem)
-        sigma = self.rem ** 2 + a ** 2 * np.cos(self.tem) ** 2
+        dt, dr, dtheta, dphi = self.calculate_initial_velocities()
 
-        e_nu = np.sqrt(A / (sigma * delta))
-        e_psi = np.sqrt(sigma / (A * np.sin(self.tem) ** 2))
-        e_mu1 = np.sqrt(delta / sigma)
-        e_mu2 = np.sqrt(1 / sigma)
-        omega = 2 * a * self.rem / A
-
-        pt, pr, pth, pphi = self.calculate_initial_momenta_general()
-
-        return e_nu * pt + omega * e_nu * pphi, e_mu1 * pr, e_mu2 * pth, e_psi * pphi
+        return dt, dr, self.rem * dtheta, self.rem * np.sin(self.tem) * dphi
 
     def _solve(self):
         return self.solver.solve()

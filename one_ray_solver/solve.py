@@ -55,7 +55,7 @@ class OneRaySolver:
             self.saver = saver_cfg.DataSaverConfig(fp)
         else:
             raise ValueError(f'Saver type {saver} is not supported.')
-        self.orb = OrbitVelocityKerr(self.s, self.bha, self.rem)
+        self.orb = OrbitVelocityFlat(self.s, self.bha, self.rem)
         self.rel = RelativeVelocityKerr(self.s, self.bha, self.rem)
 
         self.lamda = None
@@ -101,7 +101,9 @@ class OneRaySolver:
 
             # step 5: calculate the velocities
             (orbit_velocity, ), gamma_orb = self.orb.get_velocity()
-            (relative_vel, ), gamma_rel_vel = self.rel.get_velocity()
+            #(relative_vel, ), gamma_rel_vel = self.rel.get_velocity()
+            relative_vel = 0.
+            gamma_rel_vel = 1.
 
             if self.shape == 'sphere':
                 surface = SurfaceVelocityRigidSphere(self.s, (self.geometry[0], local_coord[0], local_coord[1]))
@@ -117,11 +119,11 @@ class OneRaySolver:
                            surf_vel_u1, surf_vel_u3, gamma_surf)
 
             # step 6.1: calculate the p0 component of the observer
-            delta = self.robs ** 2 - 2 * self.robs + self.bha ** 2
-            A = (self.robs ** 2 + self.bha ** 2) ** 2 - delta * self.bha * np.sin(self.tobs) ** 2
-            omega = 2 * self.bha * self.robs / A
-            e_min_nu = np.sqrt(A / ((self.robs ** 2 + self.bha ** 2 * np.cos(self.tobs) ** 2) * delta))
-            g = e_min_nu * (1 - self.lamda * omega) / g
+            #delta = self.robs ** 2 - 2 * self.robs + self.bha ** 2
+            #A = (self.robs ** 2 + self.bha ** 2) ** 2 - delta * self.bha * np.sin(self.tobs) ** 2
+            #omega = 2 * self.bha * self.robs / A
+            #e_min_nu = np.sqrt(A / ((self.robs ** 2 + self.bha ** 2 * np.cos(self.tobs) ** 2) * delta))
+            g = 1 / g#e_min_nu * (1 - self.lamda * omega) / g
 
             # step 6: save!
             self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)

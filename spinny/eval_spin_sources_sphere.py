@@ -6,6 +6,26 @@ from one_ray_solver.velocities import orbit_vel, relative_vel, surface_vel
 from one_ray_solver.utility import redshift
 
 
+def red(rem, tem, pem, robs, tobs, pobs, gamma, v, gamma2, u1, u3):
+    if pem < 0:
+        pem += 2 * np.pi
+    xobs = robs * np.cos(pobs) * np.sin(tobs)
+    yobs = robs * np.sin(pobs) * np.sin(tobs)
+    zobs = robs * np.cos(tobs)
+
+    xem = rem * np.cos(pem) * np.sin(tem)
+    yem = rem * np.sin(pem) * np.sin(tem)
+    zem = rem * np.cos(tem)
+
+    S = xobs * xem + yobs * yem + zobs * zem
+
+    f1 = robs * gamma * gamma2 * (1 - v * u3)
+    f2 = gamma2 * u1 * (rem**2 - S) / (rem )
+    f3 = robs * np.sin(tem) * np.sin(pobs - pem) * (gamma * v - gamma2 * u3 * (1 + gamma**2 * v**2 / (1 + gamma)))
+
+    return robs / (f1 - f2 - f3)
+
+
 def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1.):
     # step 0:
     fp_to_json = fp_to_redshift + 'data/'
@@ -41,6 +61,14 @@ def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1
             T = config['EMITTER']['Theta']
             P = config['EMITTER']['Phi']
 
+            robs = 35.
+            tobs = 1.0
+            pobs = 0.0
+
+            rem = config['INITIAL_DATA']['r0']
+            tem = config['INITIAL_DATA']['theta0']
+            pem = config['INITIAL_DATA']['phi0']
+
             a = config['EMITTER']['bh_a']
 
             lamda = config['CONSTANTS_OF_MOTION']['lambda']
@@ -52,19 +80,25 @@ def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1
             surf = surface_vel.SurfaceVelocityRigidSphere(s, [rho, T, P])
 
             # step 6b: eval velocities
-            (v3, ), gv3 = orbit.get_velocity()
-            (rv, ), grv = rel_vel.get_velocity()
+            v3 = 0.5
+            gv3 = 1/np.sqrt(1 - 0.25)#(v3, ), gv3 = orbit.get_velocity()
+            #(rv, ), grv = rel_vel.get_velocity()
+            rv = 0.0
+            grv = 1.0
             (u1, u3), gu = surf.get_velocity()
 
             # step 7: calculate redshift
             g = redshift.g(p0, p1, p3, v3, gv3, rv, grv, u1, u3, gu)
+            g = red(rem, tem, pem, robs, tobs, pobs, gv3, v3, gu, u1, u3)
+            if g < 0:
+                print(g, pem)
             
             # step 8: calc redshift at observer
-            delta = robs ** 2 - 2 * robs + a ** 2
-            A = (robs ** 2 + a ** 2) ** 2 - delta * a * np.sin(tobs) ** 2
-            omega = 2 * a * robs / A
-            e_min_nu = np.sqrt(A / ((robs ** 2 + a ** 2 * np.cos(tobs) ** 2) * delta))
-            g = e_min_nu * (1 - lamda * omega) / g
+            #delta = robs ** 2 - 2 * robs + a ** 2
+            #A = (robs ** 2 + a ** 2) ** 2 - delta * a * np.sin(tobs) ** 2
+            #omega = 2 * a * robs / A
+            #e_min_nu = np.sqrt(A / ((robs ** 2 + a ** 2 * np.cos(tobs) ** 2) * delta))
+            #g = 1 / g
 
             break
 

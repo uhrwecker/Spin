@@ -17,12 +17,13 @@ class RangeAdjustment:
             raise ValueError('This Range finder can only handle for radii rho < 1.')
 
         self.width = 5
-        self.resolution = 15
+        self.resolution = 25
 
         self.alpha_centre = 0
         self.beta_centre = 0
 
     def start(self, guess=(0, 0), fp=''):
+        #guess = (0, 0)
         self.guess = guess
         self.alpha_centre, self.beta_centre = guess
 
@@ -58,24 +59,23 @@ class RangeAdjustment:
 
         print('Finding range done! Continue...')
 
-        return self.ray
+        return self.ray, (self.alpha_centre, self.beta_centre)
 
     def check_hits(self):
         hit = False
 
-        if self.resolution >= 30:
+        if self.resolution >= 60:
             print('Resolution too high; somethings not working.')
-            self.resolution = 10
+            self.resolution = 25
             self.alpha_centre, self.beta_centre = self.guess
-            self.width = 3
+            self.width = 30
             self.ray.geometry[0] = 2.5
 
         print(f'Searching for an hit with resolution of {self.resolution} around \n '
-              f'alpha = {self.alpha_centre} and beta = {self.beta_centre} ...')
+              f'alpha = {self.alpha_centre} and beta = {self.beta_centre} and width = {self.width} ...')
         self.ray.change_ranges(self.alpha_centre - self.width, self.alpha_centre + self.width,
                                self.beta_centre - self.width, self.beta_centre + self.width, self.resolution)
 
-        print(self.alpha_centre, self.width, self.ray.geometry[0])
         info, number_of_collisions, hit_data = self.ray.run()
 
         if number_of_collisions > 0:
@@ -84,7 +84,8 @@ class RangeAdjustment:
             self.width, self.alpha_centre, self.beta_centre = self._find_new_width(hit_data)
             hit = True
         else:
-            self.resolution += 5
+            self.resolution += 10
+            self.width *= 1.1
             print(f'- Could not find the target, increasing resolution... (at phi = {self.ray.pem})')
 
         return hit

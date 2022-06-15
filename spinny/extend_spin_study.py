@@ -3,12 +3,13 @@ import time
 
 from eval_spin_sources_sphere import eval_spin_stuff
 
-def main():
-    s = -0.0005
-    rem = 9.32167376
 
-    fp_to_data = '/media/jan-menno/T7/Kerr/sphere/a-09/s0/'
-    fp_to_save = '/media/jan-menno/T7/Kerr/sphere/a-09/s-005/'
+def main():
+    s = -0.0015
+    rem = 8.0
+
+    fp_to_data = '/media/jan-menno/T7/Flat/s0/'
+    fp_to_save = '/media/jan-menno/T7/Flat/analy/'
 
     print('Load data (this may take some time) ...')
     start = time.time()

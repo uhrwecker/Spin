@@ -71,10 +71,10 @@ def main():
 
     if args.adjust_range:
         import numpy as np
-        phis = np.linspace(0.0, 2*np.pi, num=args.number)
+        phis = np.linspace(2.869486203278865943e+00, 3.413699103900720289e+00, num=args.number)
+        data = np.loadtxt(args.save_range + '2', delimiter=';')
+        guess = (np.mean(data[0][3:5]), np.mean(data[0][5:]))
         for n, phi in enumerate(phis):
-            data = np.loadtxt(args.save_range+'2', delimiter=';')
-            guess = (np.mean(data[n][3:5]), np.mean(data[n][5:]))
             rhh = RayHandler(s=geo['s'], bha=geo['bh_a'], geometry=geometry,
                             rem=em['r_em'], tem=em['theta_em'], pem=phi,
                             robs=obs['r_obs'], tobs=obs['theta_obs'], pobs=obs['phi_obs'],
@@ -84,7 +84,7 @@ def main():
                             save_config=~args.dont_save_exp_config, save_data=args.save)
 
             rg = RangeAdjustment(rhh)
-            rhh = rg.start(fp=args.save_range, guess=guess)
+            rhh, guess = rg.start(fp=args.save_range, guess=guess)
 
             rhh.resolution = screen['resolution']
             rhh.save_even_when_not_colliding = args.save_even_when_not_colliding
