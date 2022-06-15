@@ -146,7 +146,7 @@ def _check_for_outliers(data, phi):
 ff = FluxPlotter(fp=['/media/jan-menno/T7/Flat/s0175/',
                      '/media/jan-menno/T7/Flat/s015/',
                      '/media/jan-menno/T7/Flat/s01/',
-                     '/media/jan-menno/T7/Flat/s005/',
+                     '/media/jan-menno/T7/Flat/analy/',
                      '/media/jan-menno/T7/Flat/s0/',
                      '/media/jan-menno/T7/Flat/s-005/',
                      '/media/jan-menno/T7/Flat/s-01/',

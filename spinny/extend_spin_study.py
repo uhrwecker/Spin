@@ -5,7 +5,7 @@ from eval_spin_sources_sphere import eval_spin_stuff
 
 
 def main():
-    s = -0.0015
+    s = -0.00
     rem = 8.0
 
     fp_to_data = '/media/jan-menno/T7/Flat/s0/'
