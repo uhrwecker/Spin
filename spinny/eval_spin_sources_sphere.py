@@ -81,15 +81,26 @@ def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1
 
             # step 6b: eval velocities
             v3 = 0.5
-            gv3 = 1/np.sqrt(1 - 0.25)#(v3, ), gv3 = orbit.get_velocity()
+            gv3 = 1/np.sqrt(1 - v3 ** 2)#(v3, ), gv3 = orbit.get_velocity()
             #(rv, ), grv = rel_vel.get_velocity()
             rv = 0.0
             grv = 1.0
             (u1, u3), gu = surf.get_velocity()
 
             # step 7: calculate redshift
+            dr = config['INITIAL_DATA']['dr']
+            dtheta = config['INITIAL_DATA']['dtheta']
+            dphi = config['INITIAL_DATA']['r0']
+
+            dt = np.sqrt(dr**2 + rem ** 2 * dtheta ** 2 + rem ** 2 * np.sin(tem) ** 2 * dphi)
+
+            p0 = dt
+            p1 = dr
+            p2 = dtheta / rem
+            p3 = dphi / (rem * np.sin(tem))
+
             g = redshift.g(p0, p1, p3, v3, gv3, rv, grv, u1, u3, gu)
-            g = red(rem, tem, pem, robs, tobs, pobs, gv3, v3, gu, u1, u3)
+            #g = red(rem, tem, pem, robs, tobs, pobs, gv3, v3, gu, u1, u3)
             if g < 0:
                 print(g, pem)
             
