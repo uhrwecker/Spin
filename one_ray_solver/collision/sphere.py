@@ -1,6 +1,7 @@
 """Collision function that tests whether or not a light ray passes through an spherical object with radius rho."""
 
 import numpy as np
+from numba import jit
 
 
 def collision_with_object(r, t, p, position, geometry):
@@ -25,7 +26,6 @@ def collision_with_object(r, t, p, position, geometry):
     else:
         return [], [], []
 
-
 def convert_position(position, centre, geometry):
     r, t, p = position
     r0, t0, p0 = centre
@@ -47,7 +47,6 @@ def convert_position(position, centre, geometry):
     phi = get_phi(xn, yn, z)
 
     return r, theta, phi
-
 
 def get_phi(x, y, z, tol=1e-4):
     """

@@ -5,18 +5,18 @@ from eval_spin_sources_sphere import eval_spin_stuff
 
 
 def main():
-    s = 0.000
+    s = 0.0001
     rem = 8.0
-    v3 = 0.
+    v3 = 0.5
 
-    fp_to_data = '/media/jan-menno/T7/Flat/v05/s0/'
-    fp_to_save = '/media/jan-menno/T7/Flat/v0/s0/'
+    fp_to_data = '/media/jan-menno/T7/Flat/full_v05_303/s0/'
+    fp_to_save = '/media/jan-menno/T7/Flat/full_v05_303/s01/'
 
     print('Load data (this may take some time) ...')
     start = time.time()
 
     phis = [x[0] for x in os.walk(fp_to_data)]
-    phis = [phi for phi in phis if not phi.endswith('data')]
+    phis = [phi for phi in phis if not (phi.endswith('data') or phi.endswith('extra'))]
     phis = [phi + '/' for phi in phis if not phi == fp_to_data]
 
     for n, file in enumerate(phis):

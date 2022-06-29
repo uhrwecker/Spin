@@ -3,6 +3,7 @@ import numpy as np
 import contextlib
 import os
 import sys
+from numba import jit
 
 from one_ray_solver.ode import flat
 
@@ -81,6 +82,7 @@ class ODESolverKerr:
             result = odeint(flat.geod, psi, self.sigma, args=(self.m, self.bha), atol=self.abserr, rtol=self.relerr)
 
         return self.sigma, result
+
 
     def get_ic_from_com(self, l, q, sign_r=-1, sign_l=1, sign_q=-1, sign_t=1):
         dt = sign_t

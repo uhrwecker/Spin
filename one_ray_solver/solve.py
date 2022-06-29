@@ -2,6 +2,7 @@
 
 import numpy as np
 import time
+from numba import jit
 
 from one_ray_solver.utility import screen_COM_converter, redshift
 from one_ray_solver.ode import solver

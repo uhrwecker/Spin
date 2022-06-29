@@ -2,6 +2,7 @@
 and gets the minimal distance and the position of impact."""
 
 import numpy as np
+from numba import jit
 
 import one_ray_solver.collision.sphere as sphere
 import one_ray_solver.collision.ellipse as ellipse

@@ -1,6 +1,7 @@
 """This class is here to check the signs and the four-momentum of the photon at the position of impact."""
 
 import numpy as np
+from numba import jit
 
 
 class SignImpactSchwarzschild:
