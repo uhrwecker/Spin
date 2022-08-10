@@ -26,7 +26,7 @@ def red(rem, tem, pem, robs, tobs, pobs, gamma, v, gamma2, u1, u3):
     return robs / (f1 - f2 - f3)
 
 
-def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1., v3=0.5):
+def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1., v3=0.5, spheroid=False):
     # step 0:
     fp_to_json = fp_to_redshift + 'data/'
 
@@ -57,7 +57,6 @@ def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1
             p1 = config['MOMENTA']['p_1']
             p3 = config['MOMENTA']['p_3']
 
-            rho = config['EMITTER']['rho']
             T = config['EMITTER']['Theta']
             P = config['EMITTER']['Phi']
 
@@ -77,7 +76,12 @@ def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1
             # step 6a: setup velocities
             orbit = orbit_vel.OrbitVelocityKerr(s, a, rem)
             rel_vel = relative_vel.RelativeVelocityKerr(s, a, rem)
-            surf = surface_vel.SurfaceVelocityRigidSphere(s, [rho, T, P])
+            if spheroid:
+                aa = config['EMITTER']['a']
+                surf = surface_vel.SurfaceVelocityMaclaurinEllipsoid(s, [aa, T, P])
+            else:
+                rho = config['EMITTER']['rho']
+                surf = surface_vel.SurfaceVelocityRigidSphere(s, [rho, T, P])
 
             # step 6b: eval velocities
             #v3 = 0.1

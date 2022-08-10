@@ -67,7 +67,7 @@ class FluxPlotter:
         return np.trapz(column, dx=dy), phi
 
     def load_redshift(self, fp):
-        phis = [f.path for f in os.scandir(fp) if f.is_dir() and not 'images' in f.path]
+        phis = [f.path for f in os.scandir(fp) if f.is_dir() and not 'images' in f.path and not 'extra' in f.path]
         phis.sort()
 
         data = []
@@ -142,19 +142,19 @@ def _check_for_outliers(data, phi):
 
     #return data, new_x#phi
 
-
-ff = FluxPlotter(fp=['/media/jan-menno/T7/Flat/v0/s0175/',
-                     '/media/jan-menno/T7/Flat/v0/s015/',
-                     '/media/jan-menno/T7/Flat/v0/s01/',
-                     '/media/jan-menno/T7/Flat/v0/s005/',
-                     '/media/jan-menno/T7/Flat/v0/s0/',
-                     '/media/jan-menno/T7/Flat/v0/s-005/',
-                     '/media/jan-menno/T7/Flat/v0/s-01/',
-                     '/media/jan-menno/T7/Flat/v0/s-015/',
-                     '/media/jan-menno/T7/Flat/v0/s-0175/'],
+base = 'full_v05_303'
+ff = FluxPlotter(fp=[f'/media/jan-menno/T7/Flat/{base}/s0175/',
+                     f'/media/jan-menno/T7/Flat/{base}/s015/',
+                     f'/media/jan-menno/T7/Flat/{base}/s01/',
+                     f'/media/jan-menno/T7/Flat/{base}/s005/',
+                     f'/media/jan-menno/T7/Flat/{base}/s0/',
+                     f'/media/jan-menno/T7/Flat/{base}/s-005/',
+                     f'/media/jan-menno/T7/Flat/{base}/s-01/',
+                     f'/media/jan-menno/T7/Flat/{base}/s-015/',
+                     f'/media/jan-menno/T7/Flat/{base}/s-0175/'],
                  labels=['s =  0.00175', 's =  0.0015', 's =  0.0010', 's =  0.0005', 's =  0.0000',
                          's = -0.0005', 's = -0.0010', 's = -0.0015', 's = -0.00175'])
 ff.plot_monochrome()
 pl.grid()
-pl.ylim(0, 0.015)
+pl.ylim(0, 0.1)
 ff.show()
