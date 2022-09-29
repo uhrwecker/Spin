@@ -16,7 +16,7 @@ def alpha_beta_from_lamda_qu(lamda, qu, robs, tobs, m=1, a=0.):
     return alpha, beta
 
 
-def lamda_qu_from_alpha_beta(alpha, beta, robs, tobs, m=1, a=0.):
+def kerr_lamda_qu_from_alpha_beta(alpha, beta, robs, tobs, m=1, a=0.):
     delta = robs ** 2 - 2 * robs + a ** 2
     A = (robs ** 2 + a ** 2) ** 2 - delta * a ** 2 * np.sin(tobs) ** 2
     sigma = robs ** 2 + a ** 2 * np.cos(tobs) ** 2

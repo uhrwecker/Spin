@@ -25,6 +25,9 @@ def get_parser():
                              'appended.')
     parser.add_argument('-r', '--redshift', action='store_true', dest='save_redshift', default=False,
                         help='Save a dedicated file that contains the redshift data of the experiment.')
+    parser.add_argument('-t', '--type', action='store', dest='type_of_bh', default='kerr',
+                        help='Specify the type of central object. E.g., if you want to study Schwarzschild objects, '
+                             'it is better and faster to use type=ss')
     parser.add_argument('-c', '--csv', action='store_true', dest='save_csv', default=False,
                         help='Save, for every ray, the whole ray as a .csv file.')
     parser.add_argument('--no-exp-cfg', action='store_true', dest='dont_save_exp_config', default=False,
@@ -76,12 +79,13 @@ def main():
             data = np.loadtxt(args.save_range+'2', delimiter=';')
             guess = (np.mean(data[n][3:5]), np.mean(data[n][5:]))
             rhh = RayHandler(s=geo['s'], bha=geo['bh_a'], geometry=geometry,
-                            rem=em['r_em'], tem=em['theta_em'], pem=phi,
-                            robs=obs['r_obs'], tobs=obs['theta_obs'], pobs=obs['phi_obs'],
-                            **screen, m=1, **num, fp=save_fp, saver='json', shape=geo['shape'],
-                            save_even_when_not_colliding=args.save_even_when_not_colliding, save_handle=None,
-                            save_csv=args.save_csv, save_redshift=args.save_redshift,
-                            save_config=~args.dont_save_exp_config, save_data=args.save)
+                             rem=em['r_em'], tem=em['theta_em'], pem=phi,
+                             robs=obs['r_obs'], tobs=obs['theta_obs'], pobs=obs['phi_obs'],
+                             **screen, m=1, **num, fp=save_fp, saver='json', shape=geo['shape'],
+                             type_of_bh=args.type_of_bh,
+                             save_even_when_not_colliding=args.save_even_when_not_colliding, save_handle=None,
+                             save_csv=args.save_csv, save_redshift=args.save_redshift,
+                             save_config=~args.dont_save_exp_config, save_data=args.save)
 
             rg = RangeAdjustment(rhh)
             rhh = rg.start(fp=args.save_range, guess=guess)

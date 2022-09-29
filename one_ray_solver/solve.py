@@ -16,7 +16,7 @@ class OneRaySolver:
                  alpha=0., beta=-5., m=1, start=0, stop=70, num=100000, abserr=1e-7, relerr=1e-7, interp_num=10000,
                  sign_r=-1, sign_theta=1, sign_phi=1, fp='./', saver='json', shape='sphere',
                  save_even_when_not_colliding=True, save_handle=None,
-                 save_csv=False, save_data=True):
+                 save_csv=False, save_data=True, type_of_bh='kerr'):
         self.s = s
         self.bha = bha
 
@@ -44,6 +44,8 @@ class OneRaySolver:
         self.interpolate_num = interp_num
         self.shape = shape
 
+        self.type_of_bh = type_of_bh
+
         self.sign_r = sign_r
         self.sign_theta = sign_theta
         self.sign_phi = sign_phi
@@ -55,8 +57,14 @@ class OneRaySolver:
             self.saver = saver_cfg.DataSaverConfig(fp)
         else:
             raise ValueError(f'Saver type {saver} is not supported.')
-        self.orb = OrbitVelocityKerr(self.s, self.bha, self.rem)
-        self.rel = RelativeVelocityKerr(self.s, self.bha, self.rem)
+
+        if self.type_of_bh == 'kerr':
+            self.orb = OrbitVelocityKerr(self.s, self.bha, self.rem)
+            self.rel = RelativeVelocityKerr(self.s, self.bha, self.rem)
+
+        elif self.type_of_bh == 'ss':
+            self.orb = OrbitVelocitySchwarzschild(self.s, self.rem)
+            self.rel = RelativeVelocitySchwarzschild(self.s, self.rem)
 
         self.lamda = None
         self.qu = None
@@ -69,13 +77,18 @@ class OneRaySolver:
     def solve(self, full_output=False):
         start_time = time.time()
         # step 1: get the constants of motion
-        self.lamda, self.qu = screen_COM_converter.lamda_qu_from_alpha_beta(self.alpha, self.beta,
-                                                                            self.robs, self.tobs, self.m, self.bha)
+        if self.type_of_bh == 'kerr':
+            self.lamda, self.qu = screen_COM_converter.kerr_lamda_qu_from_alpha_beta(self.alpha, self.beta,
+                                                                                     self.robs, self.tobs, self.m,
+                                                                                     self.bha)
 
         # step 2: setup the solver itself
-        sol = solver.ODESolverKerr(self.robs, self.tobs, self.pobs, self.lamda, self.qu, self.m, self.bha,
-                                            self.start, self.stop, self.ray_num, self.abserr, self.relerr,
-                                            self.sign_r, self.sign_theta, self.sign_phi)
+        if self.type_of_bh == 'kerr':
+            sol = solver.ODESolverKerr(self.robs, self.tobs, self.pobs, self.lamda, self.qu, self.m, self.bha,
+                                       self.start, self.stop, self.ray_num, self.abserr, self.relerr,
+                                       self.sign_r, self.sign_theta, self.sign_phi)
+        else:
+            raise KeyError('Wrong type of bh specified. See README; wrong key -t / --type .')
 
         sigma, ray = sol.solve()
         #return ray, None
@@ -117,11 +130,8 @@ class OneRaySolver:
                            surf_vel_u1, surf_vel_u3, gamma_surf)
 
             # step 6.1: calculate the p0 component of the observer
-            delta = self.robs ** 2 - 2 * self.robs + self.bha ** 2
-            A = (self.robs ** 2 + self.bha ** 2) ** 2 - delta * self.bha * np.sin(self.tobs) ** 2
-            omega = 2 * self.bha * self.robs / A
-            e_min_nu = np.sqrt(A / ((self.robs ** 2 + self.bha ** 2 * np.cos(self.tobs) ** 2) * delta))
-            g = e_min_nu * (1 - self.lamda * omega) / g
+            if self.type_of_bh == 'kerr':
+                g = self.adjust_for_kerr(g)
 
             # step 6: save!
             self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)
@@ -152,10 +162,19 @@ class OneRaySolver:
         # this method will allow the user to access a solver object, without running the whole solver wrapper.
         # especially useful for plotting shenanigans.
         sol = solver.ODESolverKerr(self.robs, self.tobs, self.pobs, 0, 0, self.m, self.bha,
-                                            self.start, self.stop, self.ray_num, self.abserr, self.relerr,
-                                            self.sign_r, self.sign_theta, self.sign_phi)
+                                   self.start, self.stop, self.ray_num, self.abserr, self.relerr,
+                                   self.sign_r, self.sign_theta, self.sign_phi)
 
         return sol
+
+    def adjust_for_kerr(self, g):
+        delta = self.robs ** 2 - 2 * self.robs + self.bha ** 2
+        A = (self.robs ** 2 + self.bha ** 2) ** 2 - delta * self.bha * np.sin(self.tobs) ** 2
+        omega = 2 * self.bha * self.robs / A
+        e_min_nu = np.sqrt(A / ((self.robs ** 2 + self.bha ** 2 * np.cos(self.tobs) ** 2) * delta))
+        g = e_min_nu * (1 - self.lamda * omega) / g
+
+        return g
 
     def _no_collision(self):
         self.saver.add_observer_info(self.robs, self.tobs, self.pobs, self.alpha, self.beta)

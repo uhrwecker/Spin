@@ -21,7 +21,7 @@ class RayHandler:
     def __init__(self, s=0., bha=0., rem=8., tem=np.pi/2, pem=0., geometry=(0.5,), robs=35., tobs=1., pobs=0.,
                  alpha_min=-1., alpha_max=1., beta_min=-6., beta_max=-4., resolution=10, m=1, start=0,
                  stop=70, num=100000, abserr=1e-7, relerr=1e-7, interp_num=10000,
-                 sign_r=-1, sign_theta=1, sign_phi=1, fp='./', saver='json', shape='sphere',
+                 sign_r=-1, sign_theta=1, sign_phi=1, fp='./', type_of_bh='kerr', saver='json', shape='sphere',
                  save_even_when_not_colliding=True, save_handle=None,
                  save_csv=False, save_redshift=False, save_config=False, save_data=True):
         self.s = s
@@ -62,6 +62,8 @@ class RayHandler:
         self.fp = fp
         self.data_fp = self.setup(make=False)
 
+        self.type_of_bh = type_of_bh
+
         self.saver = saver
         self.save_exp = save_experiment.ExperimentSaver(self.fp, self.saver)
         self.save_handle = save_handle
@@ -87,7 +89,7 @@ class RayHandler:
                               0., 0., self.m, self.start, self.stop, self.ray_num, self.abserr, self.relerr,
                               self.interpolate_num, self.sign_r, self.sign_theta, self.sign_phi, self.data_fp,
                               'json', self.shape, self.save_when_not_colliding, self.save_handle, self.save_csv,
-                                   self.save_data)
+                                   self.save_data, self.type_of_bh)
 
         data_form = []
 
