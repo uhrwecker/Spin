@@ -5,13 +5,13 @@ from eval_spin_sources_sphere import eval_spin_stuff
 
 
 def main():
-    s = -0.0005
-    rem = 7.056784522336241
-    v3 = 0.3598458360284652
+    s = -0.00175
+    rem = 6.06747494
+    v3 = 0.30959846265673047
     spheriod = True
 
-    fp_to_data = '/media/jan-menno/T7/Kerr/maclaurin/a05/s005/'
-    fp_to_save = '/media/jan-menno/T7/Kerr/maclaurin/a05/s-005/'
+    fp_to_data = '/media/jan-menno/T7/Kerr/maclaurin/a09/s0175/'
+    fp_to_save = '/media/jan-menno/T7/Kerr/maclaurin/a09/s-0175/'
 
     print('Load data (this may take some time) ...')
     start = time.time()
