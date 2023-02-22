@@ -5,13 +5,14 @@ from eval_spin_sources_sphere import eval_spin_stuff
 
 
 def main():
-    s = -0.0005
+    s = 0.0005
     rem = 8.0
     v3 = 0.5
-    spheriod = True
 
-    fp_to_data = '/media/jan-menno/TOSHIBA EXT/Flat/maclaurin/s005/'
-    fp_to_save = '/media/jan-menno/TOSHIBA EXT/Flat/maclaurin/s-005/'
+    spheriod = False
+
+    fp_to_data = '/media/jan-menno/T7/Schwarzschild/higher_resolution/redshift_dist_3pi-2_sphere/s0/'
+    fp_to_save = '/media/jan-menno/T7/Schwarzschild/higher_resolution/redshift_dist_3pi-2_sphere/s005/'
 
     print('Load data (this may take some time) ...')
     start = time.time()
@@ -35,6 +36,7 @@ def main():
 
     t = time.time() - start
     print(f'Done! Took {t} s (or {t / 60} min).')
+
 
 if __name__ == '__main__':
     main()

@@ -68,7 +68,11 @@ def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1
             tem = config['INITIAL_DATA']['theta0']
             pem = config['INITIAL_DATA']['phi0']
 
-            a = config['EMITTER']['bh_a']
+            try:
+                a = config['EMITTER']['bh_a']
+            except:
+                #print('Could not find black hole spin value in config. Choosing a = 0.')
+                a = 0.
 
             lamda = config['CONSTANTS_OF_MOTION']['lambda']
             qu = config['CONSTANTS_OF_MOTION']['q']
@@ -80,12 +84,15 @@ def eval_spin_stuff(s, rem, fp_to_redshift, fp_to_new_redshift, robs=35., tobs=1
                 aa = config['EMITTER']['a']
                 surf = surface_vel.SurfaceVelocityMaclaurinEllipsoid(s, [aa, T, P])
             else:
-                rho = config['EMITTER']['rho']
+                try:
+                    rho = config['EMITTER']['rho']
+                except:
+                    rho = config['EMITTER']['a']
                 surf = surface_vel.SurfaceVelocityRigidSphere(s, [rho, T, P])
 
             # step 6b: eval velocities
             #v3 = 0.1
-            gv3 = 1/np.sqrt(1 - v3 ** 2)#(v3, ), gv3 = orbit.get_velocity()
+            (v3, ), gv3 = orbit.get_velocity()
             #(rv, ), grv = rel_vel.get_velocity()
             rv = 0.0
             grv = 1.0
